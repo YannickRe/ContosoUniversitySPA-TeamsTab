@@ -1,0 +1,10 @@
+﻿@if (User.Identity.IsAuthenticated)
+{
+    <li class="nav-item" style="margin-left: auto;">
+        <span class="navbar-text text-dark">Hello @User.Identity.Name!</span>
+    </li>
+}
+else
+{
+
+}

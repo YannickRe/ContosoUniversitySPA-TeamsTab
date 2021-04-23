@@ -16,7 +16,6 @@ namespace ContosoUniversity.Pages.Courses
             _context = context;
         }
 
-        #region snippet_RevisedIndexMethod
         public IList<CourseViewModel> CourseVM { get; set; }
 
         public async Task OnGetAsync()
@@ -30,6 +29,5 @@ namespace ContosoUniversity.Pages.Courses
                 DepartmentName = p.Department.Name
             }).ToListAsync();
         }
-        #endregion
     }
 }

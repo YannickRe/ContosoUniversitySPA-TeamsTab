@@ -2,7 +2,6 @@
 
 namespace ContosoUniversity.ViewModels
 {
-    #region snippet
     public class StudentVM
     {
         public int ID { get; set; }
@@ -10,5 +9,4 @@ namespace ContosoUniversity.ViewModels
         public string FirstMidName { get; set; }
         public DateTime EnrollmentDate { get; set; }
     }
-    #endregion
 }

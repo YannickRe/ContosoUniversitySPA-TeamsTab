@@ -41,11 +41,7 @@ namespace ContosoUniversity
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-#if SQLiteVersion
-                    webBuilder.UseStartup<StartupSQLite>();
-#else
                     webBuilder.UseStartup<Startup>();
-#endif
                 });
     }
 }

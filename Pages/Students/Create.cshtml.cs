@@ -28,10 +28,8 @@ namespace ContosoUniversity.Pages.Students
         [BindProperty]
         public Student Student { get; set; }
 
-        #region snippet_OnPostAsync
         public async Task<IActionResult> OnPostAsync()
         {
-            #region snippet_TryUpdateModelAsync
             var emptyStudent = new Student();
 
             if (await TryUpdateModelAsync<Student>(
@@ -43,10 +41,8 @@ namespace ContosoUniversity.Pages.Students
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
-            #endregion
 
             return Page();
         }
-        #endregion
     }
 }

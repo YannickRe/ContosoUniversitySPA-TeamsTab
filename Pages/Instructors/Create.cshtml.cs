@@ -1,4 +1,3 @@
-#region snippet_all
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,8 +35,6 @@ namespace ContosoUniversity.Pages.Instructors
 
         [BindProperty]
         public Instructor Instructor { get; set; }
-
-        #region snippet_find
         public async Task<IActionResult> OnPostAsync(string[] selectedCourses)
         {
             var newInstructor = new Instructor();
@@ -85,7 +82,5 @@ namespace ContosoUniversity.Pages.Instructors
             PopulateAssignedCourseData(_context, Instructor);
             return Page();
         }
-        #endregion
     }
 }
-#endregion

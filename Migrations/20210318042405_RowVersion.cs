@@ -1,4 +1,4 @@
-﻿#if !SQLiteVersion
+﻿
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -24,4 +24,3 @@ namespace ContosoUniversity.Migrations
         }
     }
 }
-#endif

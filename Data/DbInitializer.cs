@@ -1,6 +1,4 @@
-﻿#if Never // I don't think we need ConcurrencyToken = Guid.NewGuid() in SQLiteVersion
-#region snippet
-using ContosoUniversity.Models;
+﻿using ContosoUniversity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,8 +126,7 @@ namespace ContosoUniversity.Data
                 Name = "English",
                 Budget = 350000,
                 StartDate = DateTime.Parse("2007-09-01"),
-                Administrator = abercrombie,
-                ConcurrencyToken = Guid.NewGuid()
+                Administrator = abercrombie
             };
 
             var mathematics = new Department
@@ -137,8 +134,7 @@ namespace ContosoUniversity.Data
                 Name = "Mathematics",
                 Budget = 100000,
                 StartDate = DateTime.Parse("2007-09-01"),
-                Administrator = fakhouri,
-                ConcurrencyToken = Guid.NewGuid()
+                Administrator = fakhouri
             };
 
             var engineering = new Department
@@ -146,8 +142,7 @@ namespace ContosoUniversity.Data
                 Name = "Engineering",
                 Budget = 350000,
                 StartDate = DateTime.Parse("2007-09-01"),
-                Administrator = harui,
-                ConcurrencyToken = Guid.NewGuid()
+                Administrator = harui
             };
 
             var economics = new Department
@@ -155,8 +150,7 @@ namespace ContosoUniversity.Data
                 Name = "Economics",
                 Budget = 100000,
                 StartDate = DateTime.Parse("2007-09-01"),
-                Administrator = kapoor,
-                ConcurrencyToken = Guid.NewGuid()
+                Administrator = kapoor
             };
 
             var chemistry = new Course
@@ -285,5 +279,3 @@ namespace ContosoUniversity.Data
         }
     }
 }
-#endregion
-#endif

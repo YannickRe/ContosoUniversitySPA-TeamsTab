@@ -1,4 +1,3 @@
-#region snippet_All
 using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -82,20 +81,17 @@ namespace ContosoUniversity.Pages.Instructors
         public void UpdateInstructorCourses(string[] selectedCourses,
                                             Instructor instructorToUpdate)
         {
-            #region snippet_IfNull
             if (selectedCourses == null)
             {
                 instructorToUpdate.Courses = new List<Course>();
                 return;
             }
-            #endregion
 
             var selectedCoursesHS = new HashSet<string>(selectedCourses);
             var instructorCourses = new HashSet<int>
                 (instructorToUpdate.Courses.Select(c => c.CourseID));
             foreach (var course in _context.Courses)
             {
-                #region snippet_UpdateCourses
                 if (selectedCoursesHS.Contains(course.CourseID.ToString()))
                 {
                     if (!instructorCourses.Contains(course.CourseID))
@@ -103,8 +99,6 @@ namespace ContosoUniversity.Pages.Instructors
                         instructorToUpdate.Courses.Add(course);
                     }
                 }
-                #endregion
-                #region snippet_UpdateCoursesElse
                 else
                 {
                     if (instructorCourses.Contains(course.CourseID))
@@ -114,10 +108,7 @@ namespace ContosoUniversity.Pages.Instructors
                         instructorToUpdate.Courses.Remove(courseToRemove);
                     }
                 }
-                #endregion
             }
         }
     }
 }
-#endregion
-

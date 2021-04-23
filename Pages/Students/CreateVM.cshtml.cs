@@ -26,7 +26,6 @@ namespace ContosoUniversity.Pages.Students
             };
             return Page();
         }
-        #region snippet
         [BindProperty]
         public StudentVM StudentVM { get; set; }
 
@@ -42,6 +41,5 @@ namespace ContosoUniversity.Pages.Students
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
-        #endregion
     }
 }

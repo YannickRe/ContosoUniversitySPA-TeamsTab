@@ -18,7 +18,6 @@ namespace ContosoUniversity.Pages.Courses
         [BindProperty]
         public Course Course { get; set; }
 
-        #region snippet
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -37,7 +36,6 @@ namespace ContosoUniversity.Pages.Courses
             }
             return Page();
         }
-        #endregion
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
