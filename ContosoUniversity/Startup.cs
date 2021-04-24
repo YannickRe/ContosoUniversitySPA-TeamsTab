@@ -33,6 +33,7 @@ namespace ContosoUniversity
                 options.HandleSameSiteCookieCompatibility();
             });
 
+            #region Microsoft.Identity.Web
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, "AzureAd");
 
             services
@@ -44,11 +45,14 @@ namespace ContosoUniversity
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .AddMicrosoftIdentityUI();
+            #endregion
 
             services
                 .AddRazorPages(options =>
                 {
                     options.Conventions.AddPageRoute("/Courses/Index", "");
+                    options.Conventions.AllowAnonymousToPage("/Config/Index");
+                    options.Conventions.AllowAnonymousToPage("/SSO/Index");
                 });
 
             services.AddDbContext<SchoolContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SchoolContext")));
@@ -72,7 +76,7 @@ namespace ContosoUniversity
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
