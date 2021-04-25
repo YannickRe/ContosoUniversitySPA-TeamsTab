@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>Contoso University</title>
+        <script src="https://statics.teams.cdn.office.net/sdk/v1.9.0/js/MicrosoftTeams.min.js" integrity="sha384-bcRxWKfzRyPxg/waVm3IsOnaH2Inoh5gGIJNOat79+wq22/BZ+mFuSTUmVc7l2el" crossorigin="anonymous"></script>
+        <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.17/js/adal.min.js" integrity="sha384-BIOS/65fbAsb2XiCCSTlZSTTl0ZgqkOU522dpyk5meOnN2EOQ3uH+QpqEtoAtmBn" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <script>
+            microsoftTeams.initialize();
+
+            // ADAL.js configuration
+            const config = {
+                clientId: "#{clientId}",
+                redirectUri: window.location.origin + "/silent-end.html",
+                cacheLocation: "localStorage",
+                navigateToLoginRequestUrl: false,
+            };
+
+            const authContext = new AuthenticationContext(config);
+            if (authContext.isCallback(window.location.hash)) {
+                authContext.handleWindowCallback(window.location.hash);
+
+                // Only call notifySuccess or notifyFailure if this page is in the authentication popup
+                if (window.opener) {
+                    if (authContext.getCachedUser()) {
+                        microsoftTeams.authentication.notifySuccess();
+                    } else {
+                        microsoftTeams.authentication.notifyFailure(authContext.getLoginError());
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -81,7 +81,7 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
     }
 
     private async loadCourse(): Promise<void> {
-        const response = await authService.getInstance().fetch(`courses/${this.props.match.params.courseID}`);
+        const response = await authService.getInstance().fetch(`api/courses/${this.props.match.params.courseID}`);
         const data = await response.json();
         this.setState({ 
             course: data, 

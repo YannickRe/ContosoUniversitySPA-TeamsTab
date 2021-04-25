@@ -1,9 +1,8 @@
 import AuthService from "./auth.service";
 import MockAuthService from "./mock.auth.service";
 import MsalAuthService from "./msal.auth.service";
-// import AdalAuthService from "./adal.auth.service";
-// import TeamsAuthService from "./teams.auth.service";
-// import SSOAuthService from "./sso.auth.service";
+import TeamsAuthService from "./teams.auth.service";
+import SSOAuthService from "./sso.auth.service";
 
 abstract class AuthServiceInstance {
   private static instance: AuthService;
@@ -15,10 +14,10 @@ abstract class AuthServiceInstance {
   
       if (params.get("useTest")) {
          AuthServiceInstance.instance = new MockAuthService();
-      // } else if (params.get("inTeams")) {
-      //   AuthService.instance = new TeamsAuthService();
-      // } else if (params.get("inTeamsSSO")) {
-      //   AuthService.instance = new SSOAuthService();
+      } else if (params.get("inTeams")) {
+        AuthServiceInstance.instance = new TeamsAuthService();
+      } else if (params.get("inTeamsSSO")) {
+        AuthServiceInstance.instance = new SSOAuthService();
       } else {
         AuthServiceInstance.instance = new MsalAuthService();
       }

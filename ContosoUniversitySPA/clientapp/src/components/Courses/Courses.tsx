@@ -70,7 +70,7 @@ export class Courses extends React.Component<ICoursesProps, ICoursesState> {
     }
 
     private async loadCourses(): Promise<void> {
-        const response = await authService.getInstance().fetch('courses');
+        const response = await authService.getInstance().fetch('api/courses');
         const data = await response.json();
         this.setState({ 
             courses: data, 

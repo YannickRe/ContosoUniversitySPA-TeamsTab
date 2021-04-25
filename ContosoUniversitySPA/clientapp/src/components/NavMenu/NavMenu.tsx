@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { INavMenuState } from './INavMenuState';
 import { INavMenuProps } from './INavMenuProps';
 import './NavMenu.css';
+import authService from '../../services/auth.service.instance';
 
 export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
     static displayName = NavMenu.name;
@@ -12,8 +13,24 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
         super(props);
 
         this.state = {
-            collapsed: true
+            collapsed: true,
+            user: null
         };
+    }
+
+    public async componentDidMount(): Promise<void> {
+        try {
+            await authService.getInstance().getToken();
+            let user = await authService.getInstance().getUser();
+            this.setState({
+                user: user
+            });
+        }
+        catch(error) {
+            this.setState({
+                user: null
+            });
+        }
     }
 
     private toggleNavbar(): void {
@@ -23,6 +40,19 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
     }
 
     public render(): React.ReactElement<INavMenuProps> {
+        let userControl = null;
+        if (this.state.user) {
+            const style = {
+                marginLeft: 'auto'
+            };
+
+            userControl = <React.Fragment>
+                <li className="nav-item" style={style}>
+                    <span className="navbar-text text-dark">Hello {this.state.user.displayableId || this.state.user.upn || this.state.user.userName}</span>
+                </li>
+            </React.Fragment>;
+        }
+
         return (
             <header>
                 <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
@@ -34,6 +64,7 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
                                 <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/courses">Courses</NavLink>
                                 </NavItem>
+                                {userControl}
                             </ul>
                         </Collapse>
                     </Container>

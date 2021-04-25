@@ -14,7 +14,7 @@ namespace ContosoUniversitySPA.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CoursesController : ControllerBase
     {
         private readonly SchoolContext _context;
@@ -31,7 +31,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseData>>> GetAsync()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             return await _context.Courses
                             .Include(c => c.Department)
@@ -42,7 +42,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseData>> GetAsync(int id)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             var course = await _context.Courses
                  .Include(c => c.Department)
@@ -59,7 +59,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, CourseData courseData)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             if (id != courseData.CourseID)
             {
@@ -91,7 +91,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpPost]
         public async Task<ActionResult<CourseData>> CreateAsync(CourseData courseData)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             var course = new Course
             {
@@ -113,7 +113,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             var course = await _context.Courses.FindAsync(id);
 

@@ -8,6 +8,7 @@ import authService from "./services/auth.service.instance";
 import { Switch } from 'react-router-dom';
 import { Alert, Button, Spinner } from 'reactstrap';
 import { ConsentConsumer } from "./components/ConsentContext";
+import Config from './components/Config/Config';
 
 export interface IAppProps {
 
@@ -22,16 +23,18 @@ export interface IAppState {
 
 export default class App extends React.Component<IAppProps, IAppState> {
     static displayName = App.name;
+    private url: URL;
+    private params: URLSearchParams;
 
     constructor(props: any) {
         super(props);
     
-        const url = new URL(window.location.toString());
-        const params = new URLSearchParams(url.search);
+        this.url = new URL(window.location.toString());
+        this.params = new URLSearchParams(this.url.search);
     
         this.state = {
           loading: true,
-          inTeams: !!params.get("inTeams") || !!params.get("inTeamsSSO"),
+          inTeams: !!this.params.get("inTeams") || !!this.params.get("inTeamsSSO"),
           user: null,
           error: null
         };
@@ -74,48 +77,53 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         let content = null;
-        if (!authService.getInstance().isCallback()) {
-            content = <Spinner label="Authenticating..." />
-            
-            if (!this.state.loading) {
 
-                let userContent = <div className="App-login">
-                <div className="App-login-button-container">
-                    <Button color="primary"onClick={async () => await this.login()}>
+        if (this.url.pathname === '/config') {
+            content = <Route path="/config" component={Config} />;
+        } else {
+            if (!authService.getInstance().isCallback()) {
+                content = <Spinner label="Authenticating..." />
+                
+                if (!this.state.loading) {
 
-                    <span className="ms-Button-label label-46">Sign in</span>
-                    </Button>
-                </div>
-                </div>;
+                    let userContent = <div className="App-login">
+                    <div className="App-login-button-container">
+                        <Button color="primary"onClick={async () => await this.login()}>
 
-                if (this.state.user) {
-                    userContent = <Switch>
-                        <Route exact path='/' component={Courses} />
-                        <Route exact path='/courses' component={Courses} />
-                        <Route path="/courses/details/:courseID" component={CourseDetail} />
-                    </Switch>;
+                        <span className="ms-Button-label label-46">Sign in</span>
+                        </Button>
+                    </div>
+                    </div>;
+
+                    if (this.state.user) {
+                        userContent = <Switch>
+                            <Route exact path='/' component={Courses} />
+                            <Route exact path='/courses' component={Courses} />
+                            <Route path="/courses/details/:courseID" component={CourseDetail} />
+                        </Switch>;
+                    }
+
+
+                    content = <React.Fragment>
+                                <ConsentConsumer>
+                                    {({ consentRequired, requestConsent }) =>
+                                    consentRequired && (
+                                        <Alert color="warning">
+                                            Contoso University needs your consent in order to do its work.
+                                            <Button color="primary"onClick={() => requestConsent()}></Button>
+                                        </Alert>
+                                    )
+                                    }
+                                </ConsentConsumer>
+                                {userContent}
+                            </React.Fragment>;
                 }
-
-
-                content = <React.Fragment>
-                            <ConsentConsumer>
-                                {({ consentRequired, requestConsent }) =>
-                                consentRequired && (
-                                    <Alert color="warning">
-                                        Contoso University needs your consent in order to do its work.
-                                        <Button color="primary"onClick={() => requestConsent()}></Button>
-                                    </Alert>
-                                )
-                                }
-                            </ConsentConsumer>
-                            {userContent}
-                        </React.Fragment>;
             }
-        }
-        else {
-            let content = <Spinner label="Signing in..." />;
-            if(this.state.error) {
-                content = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
+            else {
+                content = <Spinner label="Signing in..." />;
+                if(this.state.error) {
+                    content = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
+                }
             }
         }
 

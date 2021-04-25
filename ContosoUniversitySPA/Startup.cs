@@ -1,5 +1,6 @@
 using ContosoUniversitySPA.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -9,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ContosoUniversitySPA
 {
@@ -25,7 +28,20 @@ namespace ContosoUniversitySPA
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(options =>
+                {
+                    options.TokenValidationParameters.ValidAudiences = new List<string>() { Configuration.GetSection("AzureAd").GetValue<string>("Audience"), Configuration.GetSection("AzureAd").GetValue<string>("ClientId") };
+                },
+                options =>
+                {
+                    Configuration.Bind("AzureAd", options);
+                    options.AllowWebApiToBeAuthorizedByACL = true;
+                });
+
+            services.Configure<JwtBearerOptions>("AzureAd", options =>
+            {
+                options.TokenValidationParameters.ValidAudiences = new List<string>() { Configuration.GetSection("AzureAd").GetValue<string>("Audience"), Configuration.GetSection("AzureAd").GetValue<string>("ClientId") };
+            });
 
             services.AddControllersWithViews();
 
