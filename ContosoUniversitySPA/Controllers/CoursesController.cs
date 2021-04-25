@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ContosoUniversitySPA.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CoursesController : ControllerBase
@@ -31,7 +31,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseData>>> GetAsync()
         {
-            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             return await _context.Courses
                             .Include(c => c.Department)
@@ -42,7 +42,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseData>> GetAsync(int id)
         {
-            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             var course = await _context.Courses
                  .Include(c => c.Department)

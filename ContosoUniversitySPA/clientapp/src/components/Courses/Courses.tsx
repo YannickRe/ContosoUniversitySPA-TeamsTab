@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner, Table } from 'reactstrap';
 import { Course } from '../../models/Course';
+import authService from "../../services/auth.service.instance";
 
 export interface ICoursesProps {
 
@@ -69,11 +70,11 @@ export class Courses extends React.Component<ICoursesProps, ICoursesState> {
     }
 
     private async loadCourses(): Promise<void> {
-        const response = await fetch('courses');
+        const response = await authService.getInstance().fetch('courses');
         const data = await response.json();
         this.setState({ 
             courses: data, 
             loading: false 
         });
-      }
+    }
 }

@@ -3,6 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Course } from '../../models/Course';
 import { withRouter } from "react-router";
 import { Spinner } from 'reactstrap';
+import authService from "../../services/auth.service.instance";
 
 export interface ICourseDetailProps extends RouteComponentProps<any> {
 
@@ -80,7 +81,7 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
     }
 
     private async loadCourse(): Promise<void> {
-        const response = await fetch(`courses/${this.props.match.params.courseID}`);
+        const response = await authService.getInstance().fetch(`courses/${this.props.match.params.courseID}`);
         const data = await response.json();
         this.setState({ 
             course: data, 
