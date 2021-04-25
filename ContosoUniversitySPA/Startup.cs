@@ -36,7 +36,12 @@ namespace ContosoUniversitySPA
                 {
                     Configuration.Bind("AzureAd", options);
                     options.AllowWebApiToBeAuthorizedByACL = true;
-                });
+                })
+                #region SendActivity
+                .EnableTokenAcquisitionToCallDownstreamApi(options => { })
+                .AddMicrosoftGraph(Configuration.GetSection("Graph"))
+                .AddInMemoryTokenCaches();
+                #endregion
 
             services.Configure<JwtBearerOptions>("AzureAd", options =>
             {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 using Microsoft.Identity.Web.Resource;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +20,15 @@ namespace ContosoUniversitySPA.Controllers
     {
         private readonly SchoolContext _context;
         private readonly ILogger<CoursesController> _logger;
+        private readonly GraphServiceClient _graphServiceClient;
 
         static readonly string[] scopeRequiredByApi = new string[] { "access_as_user" };
 
-        public CoursesController(ILogger<CoursesController> logger, SchoolContext context)
+        public CoursesController(ILogger<CoursesController> logger, SchoolContext context, GraphServiceClient graphServiceClient)
         {
             _logger = logger;
             _context = context;
+            _graphServiceClient = graphServiceClient;
         }
 
         [HttpGet]
@@ -103,6 +106,35 @@ namespace ContosoUniversitySPA.Controllers
 
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
+
+            #region SendActivity
+            await _graphServiceClient.Teams["fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"].SendActivityNotification(
+                new TeamworkActivityTopic()
+                {
+                    Source = TeamworkActivityTopicSource.EntityUrl,
+                    Value = "https://graph.microsoft.com/v1.0/teams/fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"
+                },
+                "courseCreated",
+                null,
+                new ItemBody()
+                {
+                    Content = "A new Course has been added"
+                },
+                new List<Microsoft.Graph.KeyValuePair>()
+                {
+                    new Microsoft.Graph.KeyValuePair()
+                    {
+                        Name = "courseName",
+                        Value = courseData.Title
+                    }
+                },
+                new AadUserNotificationRecipient()
+                {
+                    ODataType = "microsoft.graph.aadUserNotificationRecipient",
+                    UserId = "258368cf-55aa-4958-a43b-3e4e5f823d60"
+                }
+            ).Request().PostAsync();
+            #endregion
 
             return CreatedAtAction(
                 nameof(GetAsync),
