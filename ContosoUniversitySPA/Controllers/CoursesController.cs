@@ -107,6 +107,8 @@ namespace ContosoUniversitySPA.Controllers
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
 
+            courseData = (await this.GetAsync(course.CourseID)).Value;
+
             #region SendActivity
             await _graphServiceClient.Teams["fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"].SendActivityNotification(
                 new TeamworkActivityTopic()
@@ -139,7 +141,7 @@ namespace ContosoUniversitySPA.Controllers
             return CreatedAtAction(
                 nameof(GetAsync),
                 new { id = course.CourseID },
-                ItemToDTO(course));
+                courseData);
         }
 
         [HttpDelete("{id}")]

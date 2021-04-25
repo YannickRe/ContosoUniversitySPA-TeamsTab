@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class DepartmentDto
+public class DepartmentData
 {
     public int DepartmentID { get; set; }
     public string Name { get; set; }

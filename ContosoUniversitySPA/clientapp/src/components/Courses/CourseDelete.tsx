@@ -1,28 +1,30 @@
 import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { Course } from '../../models/Course';
 import { withRouter } from "react-router";
 import { Spinner } from 'reactstrap';
 import authService from "../../services/auth.service.instance";
 
-export interface ICourseDetailProps extends RouteComponentProps<any> {
+export interface ICourseDeleteProps extends RouteComponentProps<any> {
 
 }
 
-export interface ICourseDetailState {
+export interface ICourseDeleteState {
     course: Course | null;
     loading: boolean;
+    success: boolean;
 }
 
-class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailState> {
-    static displayName = CourseDetail.name;
+class CourseDelete extends React.Component<ICourseDeleteProps, ICourseDeleteState> {
+    static displayName = CourseDelete.name;
 
-    constructor(props: ICourseDetailProps) {
+    constructor(props: ICourseDeleteProps) {
         super(props);
 
         this.state = { 
             course: null, 
-            loading: true 
+            loading: true,
+            success: false
         };
     }
 
@@ -31,6 +33,10 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
     }
 
     public render(): React.ReactElement {
+        if (this.state.success) {
+            return <Redirect to="/courses" />;
+        }
+
         let contents = <Spinner type="grow" color="primary" />;
 
         if (!this.state.loading) {
@@ -66,8 +72,7 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
                     </dl>
                 </div>
                 <div>
-                    {/* <Link to={`/courses/edit/${this.state.course?.courseID}`}>Edit</Link> | <Link to={`/courses`}>Back to List</Link> */}
-                    <Link to={`/courses`}>Back to List</Link>
+                    <input type="button" value="Delete" className="btn btn-danger" onClick={async (event) => { await this.handleDelete(event); }} /> | <Link to={`/courses`}>Back to List</Link>
                 </div>
             </React.Fragment>
         }
@@ -75,10 +80,28 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
 
         return (
             <React.Fragment>
-                <h2>Details</h2>
+                <h1>Delete</h1>
+                <h3>Are you sure you want to delete this?</h3>
                 {contents}
             </React.Fragment>
         );
+    }
+    private async handleDelete(event: React.MouseEvent<HTMLInputElement, MouseEvent>): Promise<void> {
+        event.preventDefault();
+        
+        await authService.getInstance().fetch(`api/courses/${this.state.course?.courseID}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                        }
+                                    });
+
+        this.setState({
+            success: true,
+            loading: false,
+            course: null
+        });
     }
 
     private async loadCourse(): Promise<void> {
@@ -91,4 +114,4 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
       }
 }
 
-export default withRouter(CourseDetail);
+export default withRouter(CourseDelete);

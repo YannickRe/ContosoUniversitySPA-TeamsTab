@@ -48,7 +48,8 @@ export class Courses extends React.Component<ICoursesProps, ICoursesState> {
                             <td>{course.title}</td>
                             <td>{course.credits}</td>
                             <td>{course.departmentName}</td>
-                            <td><Link to={`/courses/edit/${course.courseID}`}>Edit</Link> | <Link to={`/courses/details/${course.courseID}`}>Details</Link> | <Link to={`/courses/delete/${course.courseID}`}>Delete</Link></td>
+                            <td><Link to={`/courses/details/${course.courseID}`}>Details</Link> | <Link to={`/courses/delete/${course.courseID}`}>Delete</Link></td>
+                            {/* <td><Link to={`/courses/edit/${course.courseID}`}>Edit</Link> | <Link to={`/courses/details/${course.courseID}`}>Details</Link> | <Link to={`/courses/delete/${course.courseID}`}>Delete</Link></td> */}
                         </tr>
                     )}
                 </tbody>

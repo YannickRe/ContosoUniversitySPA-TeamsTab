@@ -9,6 +9,8 @@ import { Switch } from 'react-router-dom';
 import { Alert, Button, Spinner } from 'reactstrap';
 import { ConsentConsumer } from "./components/ConsentContext";
 import Config from './components/Config/Config';
+import CourseCreate from './components/Courses/CourseCreate';
+import CourseDelete from './components/Courses/CourseDelete';
 
 export interface IAppProps {
 
@@ -100,6 +102,8 @@ export default class App extends React.Component<IAppProps, IAppState> {
                             <Route exact path='/' component={Courses} />
                             <Route exact path='/courses' component={Courses} />
                             <Route path="/courses/details/:courseID" component={CourseDetail} />
+                            <Route path="/courses/delete/:courseID" component={CourseDelete} />
+                            <Route path="/courses/create/" component={CourseCreate} />
                         </Switch>;
                     }
 
