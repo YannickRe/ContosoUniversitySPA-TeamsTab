@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 import * as microsoftTeams from "@microsoft/teams-js";
+import { TeamsContext } from '../TeamsContext';
 
 export interface IBarcodeProps {
 
@@ -9,6 +10,7 @@ export interface IBarcodeProps {
 export interface IBarcodeState {
     decodedText?: string;
     error?: any;
+    consent?: string;
 }
 
 export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
@@ -23,6 +25,21 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
     public componentDidMount(): void {
         if (this.context.inTeams) {
             microsoftTeams.initialize();
+
+            try {
+                navigator.permissions.query({ name: 'camera' }).then((result) => {
+                    if (result.state === 'granted') {
+                        this.setState({
+                            consent: "You have already authorized access to your camera."
+                        });
+                    } else if (result.state === 'prompt') {
+                        this.setState({
+                            consent: "You will be prompted for access to your camera, to read the barcode."
+                        });
+                    }
+                });
+            }
+            catch (error) {}
         }
     }
 
@@ -61,18 +78,34 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
 
     public render(): React.ReactElement<IBarcodeProps> {
         let contents = null;
+        let consent = null;
+
+        if (this.state.consent) {
+            consent = <p>{this.state.consent}</p>;
+        }
+
         if (this.state.error) {
-            contents = <p>{this.state.error}</p>;
+            contents = <React.Fragment>
+                            <h3>Error</h3>
+                            <p>{this.state.error}</p>
+                        </React.Fragment>;
         }
         else if (this.state.decodedText) {
-            contents = <p>{this.state.decodedText}</p>;
+            contents = <React.Fragment>
+                <h3>Barcode Text</h3>
+                <p>{this.state.decodedText}</p>
+            </React.Fragment>;
         }
         return (
             <React.Fragment>
                 <h1>Barcode</h1>
                 <Button color="primary" onClick={() => this.scanCode()}>Scan code</Button>
+                {consent}
+                <hr />
                 {contents}
             </React.Fragment>
         );
     }
 }
+
+Barcode.contextType = TeamsContext;
