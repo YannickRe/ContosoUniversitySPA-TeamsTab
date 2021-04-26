@@ -110,11 +110,14 @@ namespace ContosoUniversitySPA.Controllers
             courseData = (await this.GetAsync(course.CourseID)).Value;
 
             #region SendActivity
+            var directLink = $"https://teams.microsoft.com/l/entity/71b0a04a-36cc-479c-b82b-31e260e94a61/contosoUniversity?webUrl=https://4x10.azurewebsites.net/courses/details/{course.CourseID}&label=Course: {course.Title}&context={{\"subEntityId\": \"/courses/details/{course.CourseID}\",\"channelId\": \"19%3a6c2533a7b6254b6886a2e08d86eddc17%40thread.tacv2\"}}";
+
             await _graphServiceClient.Teams["fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"].SendActivityNotification(
                 new TeamworkActivityTopic()
                 {
-                    Source = TeamworkActivityTopicSource.EntityUrl,
-                    Value = "https://graph.microsoft.com/v1.0/teams/fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"
+                    Source = TeamworkActivityTopicSource.Text,
+                    WebUrl = directLink,
+                    Value = "Contoso University > Courses"
                 },
                 "courseCreated",
                 null,

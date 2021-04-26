@@ -20,7 +20,6 @@ namespace ContosoUniversitySPA.Controllers
     {
         private readonly SchoolContext _context;
         private readonly ILogger<CoursesController> _logger;
-        private readonly GraphServiceClient _graphServiceClient;
 
         static readonly string[] scopeRequiredByApi = new string[] { "access_as_user" };
 
