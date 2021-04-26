@@ -13,6 +13,7 @@ import CourseCreate from './components/Courses/CourseCreate';
 import CourseDelete from './components/Courses/CourseDelete';
 import { TeamsContext } from './components/TeamsContext';
 import * as microsoftTeams from "@microsoft/teams-js";
+import { Barcode } from './components/Barcode/Barcode';
 
 export interface IAppProps {
 
@@ -120,6 +121,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                 {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
                             </Route>
                             <Route exact path='/courses' component={Courses} />
+                            <Route exact path='/barcode' component={Barcode} />
                             <Route path="/courses/details/:courseID" component={CourseDetail} />
                             <Route path="/courses/delete/:courseID" component={CourseDelete} />
                             <Route path="/courses/create/" component={CourseCreate} />

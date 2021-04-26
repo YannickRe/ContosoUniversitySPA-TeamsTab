@@ -1,0 +1,65 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.9/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.9",
+    "version": "1.0.1",
+    "id": "71b0a04a-36cc-479c-b82b-31e260e94a61",
+    "packageName": "be.yannickreekmans.4x10",
+    "developer": {
+        "name": "Yannick Reekmans",
+        "websiteUrl": "https://blog.yannickreekmans.be",
+        "privacyUrl": "https://blog.yannickreekmans.be",
+        "termsOfUseUrl": "https://blog.yannickreekmans.be"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "4x10 Advanced Teams Tab",
+        "full": "4x10 Advanced Teams Tab"
+    },
+    "description": {
+        "short": "Contoso University Sample Project for 4x10 session",
+        "full": "Contoso University Sample Project for the 4x10min Advanced Teams Tabs session"
+    },
+    "accentColor": "#D2FFD6",
+    "configurableTabs": [
+        {
+            "configurationUrl": "https://4x10.azurewebsites.net/config",
+            "canUpdateConfiguration": true,
+            "scopes": [
+                "team"
+            ],
+            "context": [
+                "channelTab"
+            ]
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "4x10.azurewebsites.net"
+    ],
+    "webApplicationInfo": {
+        "id": "ff33d24d-38dc-4114-b98c-71749d18efb8",
+        "resource": "api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8"
+    },
+    "activities": {
+        "activityTypes": [
+            {
+                "type": "courseCreated",
+                "description": "Course Created Activity",
+                "templateText": "{actor} created a new course: {courseName}"
+            }
+        ]
+    },
+    "devicePermissions": [
+        "geolocation",
+        "media",
+        "midi",
+        "notifications",
+        "openExternal"
+    ]
+}
