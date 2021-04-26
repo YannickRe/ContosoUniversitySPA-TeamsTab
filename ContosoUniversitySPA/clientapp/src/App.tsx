@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router';
+import { Redirect, Route } from 'react-router';
 import { Layout } from './components/Layout/Layout';
 import './custom.css'
 import { Courses } from './components/Courses/Courses';
@@ -11,6 +11,8 @@ import { ConsentConsumer } from "./components/ConsentContext";
 import Config from './components/Config/Config';
 import CourseCreate from './components/Courses/CourseCreate';
 import CourseDelete from './components/Courses/CourseDelete';
+import { TeamsContext } from './components/TeamsContext';
+import * as microsoftTeams from "@microsoft/teams-js";
 
 export interface IAppProps {
 
@@ -21,6 +23,7 @@ export interface IAppState {
     inTeams: boolean;
     user: any;
     error: any;
+    redirectPath?: string;
 }
 
 export default class App extends React.Component<IAppProps, IAppState> {
@@ -44,10 +47,16 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     public async componentDidMount(): Promise<void> {
         try {
+            let redirectUri = undefined;
+            if (this.state.inTeams) {
+                redirectUri = await this.processDeepLink();
+            }
+
             await authService.getInstance().getToken();
             let user = await authService.getInstance().getUser();
             this.setState({
                 user: user,
+                redirectPath: redirectUri,
                 loading: false,
                 error: null,
             });
@@ -60,6 +69,14 @@ export default class App extends React.Component<IAppProps, IAppState> {
             });
         }
     }
+
+    private processDeepLink(): Promise<string | undefined> {
+        return new Promise((resolve) => {
+          microsoftTeams.getContext(context => {
+              resolve(context.subEntityId);
+          });
+        });
+      }
 
     private async login(): Promise<void> {
         this.setState({ loading: true });
@@ -99,7 +116,9 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
                     if (this.state.user) {
                         userContent = <Switch>
-                            <Route exact path='/' component={Courses} />
+                            <Route exact path="/">
+                                {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
+                            </Route>
                             <Route exact path='/courses' component={Courses} />
                             <Route path="/courses/details/:courseID" component={CourseDetail} />
                             <Route path="/courses/delete/:courseID" component={CourseDelete} />
@@ -132,9 +151,11 @@ export default class App extends React.Component<IAppProps, IAppState> {
         }
 
         return (
-            <Layout>
-                {content}
-            </Layout>
+            <TeamsContext.Provider value={this.state}>
+                <Layout>
+                    {content}
+                </Layout>
+            </TeamsContext.Provider>
         );
     }
 }
