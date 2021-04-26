@@ -47,13 +47,13 @@ class Config extends React.Component<{}, IConfigState> {
             <FormGroup check>
                 <Label check>
                     <Input type="radio" name="radio1" checked={!this.state.inTeamsSSO} onClick={() => this.setState({inTeamsSSO: false})} />{' '}
-                    Fake SSO
+                    Interactive + Silent Authentication
                 </Label>
             </FormGroup>
             <FormGroup check>
                 <Label check>
                     <Input type="radio" name="radio1" checked={this.state.inTeamsSSO} onClick={() => this.setState({inTeamsSSO: true})} />{' '}
-                    Real SSO
+                    Teams SSO
                 </Label>
             </FormGroup>
       </React.Fragment>
