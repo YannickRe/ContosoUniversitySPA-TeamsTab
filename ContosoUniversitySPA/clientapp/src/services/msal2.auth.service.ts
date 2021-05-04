@@ -1,9 +1,12 @@
-import { Configuration, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
+import { Configuration, InteractionRequiredAuthError, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
 import { AuthenticationResult, AccountInfo } from "@azure/msal-common";
 import AuthService from "./auth.service";
 
-// An authentication service that uses the MSAL.js library to sign in users with
-// either an AAD or MSA account. This leverages the AAD v2 endpoint.
+export enum SigninType {
+    Popup,
+    Redirect
+}
+
 class Msal2AuthService extends AuthService {
     private redirectPath: string = "/callback/v2";
     private app: PublicClientApplication;
@@ -17,11 +20,25 @@ class Msal2AuthService extends AuthService {
     private tokenRequest = {
         scopes: ["api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8/access_as_user"]
     };
+    private signinType: SigninType = SigninType.Popup;
 
-    constructor() {
+    constructor(signinType: SigninType) {
         super();
 
+        this.signinType = signinType;
         this.app = new PublicClientApplication(this.applicationConfig);
+    }
+
+    public async handleRedirect(): Promise<void> {
+        try {
+            let authResult = await this.app.handleRedirectPromise();
+            if (authResult) {
+                this.handleAuthResult(authResult);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 
     public isCallback(): boolean {
@@ -29,17 +46,26 @@ class Msal2AuthService extends AuthService {
     }
 
     public async login(): Promise<AccountInfo | null> {
-        let authResult: AuthenticationResult = await this.app.loginPopup(this.tokenRequest);
-        if (!authResult || !authResult.account) {
-            return null;
-        } else {
-            this.app.setActiveAccount(authResult.account);
-            return authResult.account;
+        if (this.signinType === SigninType.Popup) {
+            let authResult: AuthenticationResult = await this.app.loginPopup(this.tokenRequest);
+            return this.handleAuthResult(authResult);
         }
+        else {
+            this.app.loginRedirect({
+                ...this.tokenRequest,
+                redirectStartPage: window.location.href
+            });
+        }
+        return null;
     }
 
     public async logout(): Promise<void> {
-        await this.app.logoutPopup();
+        if (this.signinType === SigninType.Popup) {
+            await this.app.logoutPopup();
+        }
+        else {
+            this.app.logoutRedirect();
+        }
     }
 
     public getUser(): Promise<AccountInfo | null> {
@@ -75,20 +101,42 @@ class Msal2AuthService extends AuthService {
             return authResult.accessToken;
         }
         catch (error) { 
-            console.error(error);
+            if (error instanceof InteractionRequiredAuthError) {
+                if (this.signinType === SigninType.Popup) {
+                    try {
+                        let authResult: AuthenticationResult = await this.app.acquireTokenPopup(this.tokenRequest);
+                        this.app.setActiveAccount(authResult.account);
+                        return authResult.accessToken;
+                    }
+                    catch (error) { 
+                        console.error(error);
+                    }
+                }
+                else {
+                    try {
+                        this.app.acquireTokenRedirect({
+                            ...this.tokenRequest,
+                            redirectStartPage: window.location.href
+                        });
+                    }
+                    catch (error) { 
+                        console.error(error);
+                    }
+                }
+            } else {
+                console.error(error);
+            }
         }
-
-        //Silently acquiring failed, trying different method
-        try {
-            let authResult: AuthenticationResult = await this.app.acquireTokenPopup(this.tokenRequest);
-            this.app.setActiveAccount(authResult.account);
-            return authResult.accessToken;
-        }
-        catch (error) { 
-            console.error(error);
-        }
-
         return null;
+    }
+
+    private handleAuthResult(authResult: AuthenticationResult) {
+        if (!authResult || !authResult.account) {
+            return null;
+        } else {
+            this.app.setActiveAccount(authResult.account);
+            return authResult.account;
+        }
     }
 }
 

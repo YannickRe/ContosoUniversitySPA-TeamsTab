@@ -51,14 +51,14 @@ export default class App extends React.Component<IAppProps, IAppState> {
             if (this.state.inTeams) {
                 redirectUri = await this.processDeepLink();
             }
-
+            await authService.getInstance().handleRedirect();
             await authService.getInstance().getToken();
             let user = await authService.getInstance().getUser();
             this.setState({
                 user: user,
                 redirectPath: redirectUri,
                 loading: false,
-                error: null,
+                error: null
             });
         }
         catch(error) {

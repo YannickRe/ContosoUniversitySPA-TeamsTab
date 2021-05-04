@@ -1,5 +1,5 @@
 import AuthService from "./auth.service";
-import Msal2AuthService from "./msal2.auth.service";
+import Msal2AuthService, { SigninType } from "./msal2.auth.service";
 import TeamsAuthService from "./teams.auth.service";
 import SSOAuthService from "./sso.auth.service";
 
@@ -18,7 +18,7 @@ abstract class AuthServiceInstance {
       // } else if (params.get("inTeamsSSO")) {
       //   AuthServiceInstance.instance = new SSOAuthService();
       // } else {
-        AuthServiceInstance.instance = new Msal2AuthService();
+        AuthServiceInstance.instance = new Msal2AuthService(SigninType.Popup);
       //}
     }
   
