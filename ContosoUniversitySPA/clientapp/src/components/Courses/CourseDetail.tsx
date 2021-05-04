@@ -4,7 +4,7 @@ import { Course } from '../../models/Course';
 import { withRouter } from "react-router";
 import { Spinner } from 'reactstrap';
 import authService from "../../services/auth.service.instance";
-import { TeamsContext } from '../TeamsContext';
+import { AppContext } from '../AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
 
 export interface ICourseDetailProps extends RouteComponentProps<any> {
@@ -142,6 +142,6 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
       }
 }
 
-CourseDetail.contextType = TeamsContext;
+CourseDetail.contextType = AppContext;
 
 export default withRouter(CourseDetail);

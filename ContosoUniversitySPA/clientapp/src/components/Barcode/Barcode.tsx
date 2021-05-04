@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 import * as microsoftTeams from "@microsoft/teams-js";
-import { TeamsContext } from '../TeamsContext';
+import { AppContext } from '../AppContext';
 
 export interface IBarcodeProps {
 
@@ -108,4 +108,4 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
     }
 }
 
-Barcode.contextType = TeamsContext;
+Barcode.contextType = AppContext;

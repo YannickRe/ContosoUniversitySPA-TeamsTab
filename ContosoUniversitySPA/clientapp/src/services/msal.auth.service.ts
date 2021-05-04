@@ -3,7 +3,7 @@ import AuthService from "./auth.service";
 
 // An authentication service that uses the MSAL.js library to sign in users with
 // either an AAD or MSA account. This leverages the AAD v2 endpoint.
-class MsalAuthService extends AuthService {
+class MsalAuthService {
     private app: Msal.UserAgentApplication;
 
     private applicationConfig: Msal.Configuration = {
@@ -19,7 +19,7 @@ class MsalAuthService extends AuthService {
     };
 
     constructor() {
-        super();
+        //super();
 
         this.app = new Msal.UserAgentApplication(this.applicationConfig);
     

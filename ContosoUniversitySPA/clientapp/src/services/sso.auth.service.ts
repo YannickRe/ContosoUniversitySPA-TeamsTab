@@ -4,12 +4,12 @@ import TeamsAuthService from "./teams.auth.service";
 
 // An authentication that will only request an access token for the logged in user.
 // This token can then be used to request other resources.
-class SSOAuthService extends AuthService {
+class SSOAuthService {
     private authToken: string | null;
     private teamsAuthService: TeamsAuthService | null = null;
 
     constructor() {
-        super();
+        //super();
         // Initialize the Teams SDK
         microsoftTeams.initialize();
 

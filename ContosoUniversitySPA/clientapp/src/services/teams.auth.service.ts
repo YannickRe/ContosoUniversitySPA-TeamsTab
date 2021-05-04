@@ -4,13 +4,13 @@ import AuthService from "./auth.service";
 
 // An authentication service that uses the ADAL.js and Teams.js library to sign in users with
 // their AAD account. This leverages the AAD v1 endpoint.
-class TeamsAuthService extends AuthService {
+class TeamsAuthService {
   private applicationConfig: AuthenticationContext.Options;
   private authContext: AuthenticationContext;
   private loginPromise: Promise<string> | null = null;
 
   public constructor() {
-      super();
+      //super();
 
       // Initialize the Teams SDK
       microsoftTeams.initialize();

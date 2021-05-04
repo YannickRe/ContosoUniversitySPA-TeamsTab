@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { INavMenuState } from './INavMenuState';
 import { INavMenuProps } from './INavMenuProps';
 import './NavMenu.css';
-import authService from '../../services/auth.service.instance';
-import { TeamsContext } from '../TeamsContext';
+import { AppContext } from '../AppContext';
 
 export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
     static displayName = NavMenu.name;
@@ -14,24 +13,8 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
         super(props);
 
         this.state = {
-            collapsed: true,
-            user: null
+            collapsed: true
         };
-    }
-
-    public async componentDidMount(): Promise<void> {
-        try {
-            await authService.getInstance().getToken();
-            let user = await authService.getInstance().getUser();
-            this.setState({
-                user: user
-            });
-        }
-        catch(error) {
-            this.setState({
-                user: null
-            });
-        }
     }
 
     private toggleNavbar(): void {
@@ -42,14 +25,14 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
 
     public render(): React.ReactElement<INavMenuProps> {
         let userControl = null;
-        if (this.state.user) {
+        if (this.context.user) {
             const style = {
                 marginLeft: 'auto'
             };
 
             userControl = <React.Fragment>
                 <li className="nav-item" style={style}>
-                    <span className="navbar-text text-dark">Hello {this.state.user.displayableId || this.state.user.upn || this.state.user.userName}</span>
+                    <span className="navbar-text text-dark">Hello {this.context.user.displayableId || this.context.user.upn || this.context.user.userName || this.context.user.username}</span>
                 </li>
             </React.Fragment>;
         }
@@ -83,4 +66,4 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
     }
 }
 
-NavMenu.contextType = TeamsContext;
+NavMenu.contextType = AppContext;
