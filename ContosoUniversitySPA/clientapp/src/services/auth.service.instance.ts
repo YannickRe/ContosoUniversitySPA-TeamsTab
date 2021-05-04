@@ -11,7 +11,7 @@ abstract class AuthServiceInstance {
       const url = new URL(window.location.toString());
       const params = new URLSearchParams(url.search);
   
-      if (params.get("inTeams") || url.pathname === '/silent-start' || url.pathname === '/silent-end') {
+      if (params.get("inTeams") || url.pathname === TeamsAuthService.authStartPath || url.pathname === TeamsAuthService.authEndPath) {
          AuthServiceInstance.instance = new TeamsAuthService();
       // } else if (params.get("inTeamsSSO")) {
       //   AuthServiceInstance.instance = new SSOAuthService();

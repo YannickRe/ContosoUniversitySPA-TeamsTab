@@ -13,6 +13,7 @@ import CourseDelete from './components/Courses/CourseDelete';
 import { AppContext } from './components/AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { Barcode } from './components/Barcode/Barcode';
+import TeamsAuthService from './services/teams.auth.service';
 
 export interface IAppProps {
 
@@ -54,7 +55,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
             await authService.getInstance().handleRedirect();
 
-            if (this.url.pathname === '/silent-start') {
+            if (this.url.pathname === TeamsAuthService.authStartPath) {
                 authService.getInstance().login();
             }
 
@@ -103,7 +104,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
     public render() {
         let content = null;
 
-        if (this.url.pathname !== '/silent-start') {
+        if (this.url.pathname !== TeamsAuthService.authStartPath) {
             if (this.url.pathname === '/config') {
                 content = <Route path="/config" component={Config} />;
             } else {

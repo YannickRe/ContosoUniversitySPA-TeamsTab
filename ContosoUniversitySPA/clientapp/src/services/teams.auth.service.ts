@@ -5,8 +5,9 @@ import { AccountInfo } from "@azure/msal-common";
 import { AuthenticationResult } from "@azure/msal-browser";
 
 class TeamsAuthService extends AuthService {
-  private loginPromise: Promise<AccountInfo | null> | null = null;
-  private msal2AuthService: Msal2AuthService = new Msal2AuthService(SigninType.Redirect, '/silent-end');
+  public static authStartPath: string = "/auth/teams";
+  public static authEndPath: string = "/callback/teams";
+  private msal2AuthService: Msal2AuthService = new Msal2AuthService(SigninType.Redirect, TeamsAuthService.authEndPath);
 
   public constructor() {
     super();
@@ -29,31 +30,28 @@ class TeamsAuthService extends AuthService {
 
   public login(): Promise<AccountInfo | null>  {
     const url = new URL(window.location.toString());
-    if (url.pathname === '/silent-start') {
+    if (url.pathname === TeamsAuthService.authStartPath) {
       this.msal2AuthService.login();
     }
     else {
-      if (!this.loginPromise) {
-        this.loginPromise = new Promise<AccountInfo | null>(async (resolve, reject) => {
-          // Start the login flow
-          microsoftTeams.authentication.authenticate({
-            url: `${window.location.origin}/silent-start`,
-            width: 600,
-            height: 535,
-            successCallback: (account) => {
-              if (account)
-              {
-                this.msal2AuthService.setActiveAccount(JSON.parse(account));
-              }
-              resolve(this.getUser());
-            },
-            failureCallback: (reason) => {
-              reject(reason);
-            },
-          });
+      return new Promise<AccountInfo | null>(async (resolve, reject) => {
+        // Start the login flow
+        microsoftTeams.authentication.authenticate({
+          url: `${window.location.origin}${TeamsAuthService.authStartPath}`,
+          width: 600,
+          height: 535,
+          successCallback: (account) => {
+            if (account)
+            {
+              this.msal2AuthService.setActiveAccount(JSON.parse(account));
+            }
+            resolve(this.getUser());
+          },
+          failureCallback: (reason) => {
+            reject(reason);
+          },
         });
-      }
-      return this.loginPromise;
+      });
     }
     return Promise.resolve(null);
   }

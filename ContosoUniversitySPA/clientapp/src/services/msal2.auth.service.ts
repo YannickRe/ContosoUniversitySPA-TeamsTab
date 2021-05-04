@@ -8,7 +8,7 @@ export enum SigninType {
 }
 
 class Msal2AuthService extends AuthService {
-    private redirectPath: string = "/callback/v2";
+    private redirectPath: string = "/callback/standalone";
     private app: PublicClientApplication;
     private applicationConfig: Configuration = {
         auth: {
@@ -24,7 +24,7 @@ class Msal2AuthService extends AuthService {
     };
     private signinType: SigninType = SigninType.Popup;
 
-    constructor(signinType: SigninType, redirectPath: string = "/callback/v2") {
+    constructor(signinType: SigninType, redirectPath: string = "/callback/standalone") {
         super();
 
         this.redirectPath = redirectPath;
