@@ -1,3 +1,4 @@
+import { AccountInfo } from "@azure/msal-common";
 import * as microsoftTeams from "@microsoft/teams-js";
 import AuthService from "./auth.service";
 import TeamsAuthService from "./teams.auth.service";
@@ -23,12 +24,12 @@ class SSOAuthService {
         return this.teamsAuthService.isCallback();
     }
 
-    public login(): Promise<string> {
-        if (!this.teamsAuthService) {
-            this.teamsAuthService = new TeamsAuthService();
-        }
-        return this.teamsAuthService.login();
-    }
+    // public async login(): Promise<AccountInfo | null> {
+    //     if (!this.teamsAuthService) {
+    //         this.teamsAuthService = new TeamsAuthService();
+    //     }
+    //     return this.teamsAuthService.login();
+    // }
 
     public logout(): void {
 

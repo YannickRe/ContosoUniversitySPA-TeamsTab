@@ -1,8 +1,8 @@
 
-import { AccountInfo } from "@azure/msal-common";
+import { AccountInfo, AuthenticationResult } from "@azure/msal-common";
 
 abstract class AuthService {
-  abstract handleRedirect(): Promise<void>;
+  abstract handleRedirect(): Promise<AuthenticationResult | null>;
 
   abstract isCallback(): boolean;
 
@@ -12,7 +12,7 @@ abstract class AuthService {
 
   abstract getToken(): Promise<string | null>;
 
-  abstract getUser(): Promise<AccountInfo | null>;
+  abstract getUser(): AccountInfo | null;
 
   // Does an authenticated fetch by acquiring and appending the Bearer token for our backend
   public async fetch(url: RequestInfo, options?: RequestInit | undefined): Promise<Response> {

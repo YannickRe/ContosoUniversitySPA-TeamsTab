@@ -11,15 +11,13 @@ abstract class AuthServiceInstance {
       const url = new URL(window.location.toString());
       const params = new URLSearchParams(url.search);
   
-      // if (params.get("useTest")) {
-      //    AuthServiceInstance.instance = new MockAuthService();
-      // } else if (params.get("inTeams")) {
-      //   AuthServiceInstance.instance = new TeamsAuthService();
+      if (params.get("inTeams") || url.pathname === '/silent-start' || url.pathname === '/silent-end') {
+         AuthServiceInstance.instance = new TeamsAuthService();
       // } else if (params.get("inTeamsSSO")) {
       //   AuthServiceInstance.instance = new SSOAuthService();
-      // } else {
+      } else {
         AuthServiceInstance.instance = new Msal2AuthService(SigninType.Popup);
-      //}
+      }
     }
   
     return AuthServiceInstance.instance;

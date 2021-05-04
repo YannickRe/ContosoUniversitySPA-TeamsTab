@@ -51,7 +51,13 @@ export default class App extends React.Component<IAppProps, IAppState> {
             if (this.state.inTeams) {
                 redirectUri = await this.processDeepLink();
             }
+
             await authService.getInstance().handleRedirect();
+
+            if (this.url.pathname === '/silent-start') {
+                authService.getInstance().login();
+            }
+
             await authService.getInstance().getToken();
             let user = await authService.getInstance().getUser();
             this.setState({
@@ -97,43 +103,44 @@ export default class App extends React.Component<IAppProps, IAppState> {
     public render() {
         let content = null;
 
-        if (this.url.pathname === '/config') {
-            content = <Route path="/config" component={Config} />;
-        } else {
-            if (!authService.getInstance().isCallback()) {
-                content = <Spinner label="Authenticating..." />
-                
-                if (!this.state.loading) {
-                    content =   <div className="App-login">
-                                    <div className="App-login-button-container">
-                                        <Button color="primary" onClick={async () => await this.login()}>
-                                            <span className="ms-Button-label label-46">Sign in</span>
-                                        </Button>
-                                    </div>
-                                </div>;
+        if (this.url.pathname !== '/silent-start') {
+            if (this.url.pathname === '/config') {
+                content = <Route path="/config" component={Config} />;
+            } else {
+                if (!authService.getInstance().isCallback()) {
+                    content = <Spinner label="Authenticating..." />
+                    
+                    if (!this.state.loading) {
+                        content =   <div className="App-login">
+                                        <div className="App-login-button-container">
+                                            <Button color="primary" onClick={async () => await this.login()}>
+                                                <span className="ms-Button-label label-46">Sign in</span>
+                                            </Button>
+                                        </div>
+                                    </div>;
 
-                    if (this.state.user) {
-                        content =   <Switch>
-                                        <Route exact path="/">
-                                            {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
-                                        </Route>
-                                        <Route exact path='/courses' component={Courses} />
-                                        <Route exact path='/barcode' component={Barcode} />
-                                        <Route path="/courses/details/:courseID" component={CourseDetail} />
-                                        <Route path="/courses/delete/:courseID" component={CourseDelete} />
-                                        <Route path="/courses/create/" component={CourseCreate} />
-                                    </Switch>;
+                        if (this.state.user) {
+                            content =   <Switch>
+                                            <Route exact path="/">
+                                                {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
+                                            </Route>
+                                            <Route exact path='/courses' component={Courses} />
+                                            <Route exact path='/barcode' component={Barcode} />
+                                            <Route path="/courses/details/:courseID" component={CourseDetail} />
+                                            <Route path="/courses/delete/:courseID" component={CourseDelete} />
+                                            <Route path="/courses/create/" component={CourseCreate} />
+                                        </Switch>;
+                        }
+                    }
+                }
+                else {
+                    content = <Spinner label="Signing in..." />;
+                    if(this.state.error) {
+                        content = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
                     }
                 }
             }
-            else {
-                content = <Spinner label="Signing in..." />;
-                if(this.state.error) {
-                    content = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
-                }
-            }
         }
-
         return (
             <AppContext.Provider value={this.state}>
                 <Layout>

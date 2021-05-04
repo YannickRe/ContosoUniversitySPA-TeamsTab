@@ -1,4 +1,4 @@
-import { Configuration, InteractionRequiredAuthError, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
+import { Configuration, InteractionRequiredAuthError, PopupRequest, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
 import { AuthenticationResult, AccountInfo } from "@azure/msal-common";
 import AuthService from "./auth.service";
 
@@ -13,32 +13,40 @@ class Msal2AuthService extends AuthService {
     private applicationConfig: Configuration = {
         auth: {
             clientId: 'ff33d24d-38dc-4114-b98c-71749d18efb8',
-            authority: 'https://login.microsoftonline.com/22e80a38-0d9e-4d45-a92c-356004a48f3f',
-            redirectUri: `${window.location.origin}${this.redirectPath}`
+            authority: 'https://login.microsoftonline.com/22e80a38-0d9e-4d45-a92c-356004a48f3f'
+        },
+        cache: {
+            cacheLocation: "localStorage"
         }
     };
-    private tokenRequest = {
+    private tokenRequest: PopupRequest = {
         scopes: ["api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8/access_as_user"]
     };
     private signinType: SigninType = SigninType.Popup;
 
-    constructor(signinType: SigninType) {
+    constructor(signinType: SigninType, redirectPath: string = "/callback/v2") {
         super();
 
+        this.redirectPath = redirectPath;
         this.signinType = signinType;
+
+        this.applicationConfig.auth.redirectUri = `${window.location.origin}${this.redirectPath}`;
+
         this.app = new PublicClientApplication(this.applicationConfig);
     }
 
-    public async handleRedirect(): Promise<void> {
+    public async handleRedirect(): Promise<AuthenticationResult | null> {
         try {
             let authResult = await this.app.handleRedirectPromise();
             if (authResult) {
                 this.handleAuthResult(authResult);
             }
+            return authResult;
         }
         catch (error) {
             console.error(error);
         }
+        return null;
     }
 
     public isCallback(): boolean {
@@ -47,13 +55,15 @@ class Msal2AuthService extends AuthService {
 
     public async login(): Promise<AccountInfo | null> {
         if (this.signinType === SigninType.Popup) {
-            let authResult: AuthenticationResult = await this.app.loginPopup(this.tokenRequest);
+            let authResult: AuthenticationResult = await this.app.loginPopup({
+                ...this.tokenRequest
+            });
             return this.handleAuthResult(authResult);
         }
         else {
             this.app.loginRedirect({
                 ...this.tokenRequest,
-                redirectStartPage: window.location.href
+                redirectStartPage: `${window.location.href}`
             });
         }
         return null;
@@ -68,9 +78,9 @@ class Msal2AuthService extends AuthService {
         }
     }
 
-    public getUser(): Promise<AccountInfo | null> {
+    public getUser(): AccountInfo | null {
         let currentAccount: AccountInfo | null = this.app.getActiveAccount();
-        return Promise.resolve<AccountInfo | null>(currentAccount);
+        return currentAccount;
     }
 
     public async getToken(): Promise<string | null> {
@@ -116,7 +126,7 @@ class Msal2AuthService extends AuthService {
                     try {
                         this.app.acquireTokenRedirect({
                             ...this.tokenRequest,
-                            redirectStartPage: window.location.href
+                            redirectStartPage: `${window.location.href}`
                         });
                     }
                     catch (error) { 
@@ -128,6 +138,10 @@ class Msal2AuthService extends AuthService {
             }
         }
         return null;
+    }
+
+    public setActiveAccount(account: AccountInfo): void {
+        this.app.setActiveAccount(account);
     }
 
     private handleAuthResult(authResult: AuthenticationResult) {

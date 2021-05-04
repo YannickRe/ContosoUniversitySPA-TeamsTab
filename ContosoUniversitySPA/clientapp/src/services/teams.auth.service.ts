@@ -1,53 +1,50 @@
 import * as microsoftTeams from "@microsoft/teams-js";
-import AuthenticationContext from "adal-angular";
 import AuthService from "./auth.service";
+import Msal2AuthService, { SigninType } from "./msal2.auth.service";
+import { AccountInfo } from "@azure/msal-common";
+import { AuthenticationResult } from "@azure/msal-browser";
 
-// An authentication service that uses the ADAL.js and Teams.js library to sign in users with
-// their AAD account. This leverages the AAD v1 endpoint.
-class TeamsAuthService {
-  private applicationConfig: AuthenticationContext.Options;
-  private authContext: AuthenticationContext;
-  private loginPromise: Promise<string> | null = null;
+class TeamsAuthService extends AuthService {
+  private loginPromise: Promise<AccountInfo | null> | null = null;
+  private msal2AuthService: Msal2AuthService = new Msal2AuthService(SigninType.Redirect, '/silent-end');
 
   public constructor() {
-      //super();
+    super();
 
-      // Initialize the Teams SDK
-      microsoftTeams.initialize();
+    // Initialize the Teams SDK
+    microsoftTeams.initialize();
+  }
 
-      // Check for any context information supplied via our QSPs
-      const tenantId = "22e80a38-0d9e-4d45-a92c-356004a48f3f";
-      const clientId = "ff33d24d-38dc-4114-b98c-71749d18efb8";
-
-      // Configure ADAL
-      this.applicationConfig = {
-        tenant: tenantId,
-        clientId: clientId,
-        endpoints: {
-            api: clientId,
-        },
-        redirectUri: `${window.location.origin}/silent-end.html`,
-        cacheLocation: "localStorage",
-        navigateToLoginRequestUrl: false,
-      };
-
-      this.authContext = new AuthenticationContext(this.applicationConfig);
+  public async handleRedirect(): Promise<AuthenticationResult | null> {
+    var result = await this.msal2AuthService.handleRedirect();
+    if (result) {
+      microsoftTeams.authentication.notifySuccess(JSON.stringify(result.account));
+    }
+    return result;
   }
 
   public isCallback(): boolean {
-    return this.authContext.isCallback(window.location.hash);
+    return this.msal2AuthService.isCallback();
   }
 
-  public login(): Promise<string>  {
-    if (!this.loginPromise) {
-      this.loginPromise = new Promise((resolve, reject) => {
-        this.ensureLoginHint().then(() => {
+  public login(): Promise<AccountInfo | null>  {
+    const url = new URL(window.location.toString());
+    if (url.pathname === '/silent-start') {
+      this.msal2AuthService.login();
+    }
+    else {
+      if (!this.loginPromise) {
+        this.loginPromise = new Promise<AccountInfo | null>(async (resolve, reject) => {
           // Start the login flow
           microsoftTeams.authentication.authenticate({
-            url: `${window.location.origin}/silent-start.html`,
+            url: `${window.location.origin}/silent-start`,
             width: 600,
             height: 535,
-            successCallback: () => {
+            successCallback: (account) => {
+              if (account)
+              {
+                this.msal2AuthService.setActiveAccount(JSON.parse(account));
+              }
               resolve(this.getUser());
             },
             failureCallback: (reason) => {
@@ -55,64 +52,22 @@ class TeamsAuthService {
             },
           });
         });
-      });
+      }
+      return this.loginPromise;
     }
-    return this.loginPromise;
+    return Promise.resolve(null);
   }
 
-  public logout(): void {
-    this.authContext.logOut();
+  public async logout(): Promise<void> {
+    await this.msal2AuthService.logout();
   }
 
-  public getUser(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.authContext.getUser((error, user) => {
-        if (!error && user) {
-          resolve(user.profile);
-        } else {
-          reject(error);
-        }
-      });
-    });
+  public getUser(): AccountInfo | null {
+    return this.msal2AuthService.getUser();
   }
 
-  public getToken(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.ensureLoginHint().then(() => {
-        this.authContext.acquireToken(
-          (this.applicationConfig.endpoints as any).api,
-          (reason, token, error) => {
-            if (!error && token) {
-              resolve(token);
-            } else {
-              reject({ error, reason });
-            }
-          }
-        );
-      });
-    });
-  }
-
-  private ensureLoginHint(): Promise<void> {
-    return new Promise((resolve) => {
-      microsoftTeams.getContext((context) => {
-        const scopes = encodeURIComponent(
-          "email openid profile offline_access User.Read"
-        );
-
-        // Setup extra query parameters for ADAL
-        // - openid and profile scope adds profile information to the id_token
-        // - login_hint provides the expected user name
-        if (context.loginHint) {
-          this.authContext.config.extraQueryParameter = `prompt=consent&scope=${scopes}&login_hint=${encodeURIComponent(
-            context.loginHint
-          )}`;
-        } else {
-          this.authContext.config.extraQueryParameter = `prompt=consent&scope=${scopes}`;
-        }
-        resolve();
-      });
-    });
+  public async getToken(): Promise<string | null> {
+    return await this.msal2AuthService.getToken();
   }
 }
 
