@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Course } from '../../models/Course';
 import { withRouter } from "react-router";
-import { Spinner } from 'reactstrap';
+import { Button, Spinner } from 'reactstrap';
 import authService from "../../services/auth.service.instance";
 import { AppContext } from '../AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
@@ -51,10 +51,10 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
                             <hr />
                         </div>
                         <div>
-                            <a href="#" onClick={(event) => { this.copyLink(event); }}>Copy link</a> |{' '} 
-                            <a href="#" onClick={(event) => { this.scheduleMeeting(event); }}>Schedule meeting</a> |{' '}
-                            <a href="#" onClick={(event) => { this.startChat(event); }}>Start group chat</a> |{' '}
-                            <a href="#" onClick={(event) => { this.openTeamsChat(event); }}>Open Teams chat</a>
+                            <Button color="link" onClick={(event) => { this.copyLink(event); }}>Copy link</Button> |{' '} 
+                            <Button color="link" onClick={(event) => { this.scheduleMeeting(event); }}>Schedule meeting</Button> |{' '}
+                            <Button color="link" onClick={(event) => { this.startChat(event); }}>Start group chat</Button> |{' '}
+                            <Button color="link" onClick={(event) => { this.openTeamsChat(event); }}>Open Teams chat</Button>
                         </div>
                 </React.Fragment>;
             }
