@@ -1,36 +1,14 @@
-import { AccountInfo, AuthenticationResult } from "@azure/msal-common";
+import { AccountInfo } from "@azure/msal-common";
 import * as microsoftTeams from "@microsoft/teams-js";
-import AuthService from "./auth.service";
 import TeamsAuthService from "./teams.auth.service";
 
-// An authentication that will only request an access token for the logged in user.
-// This token can then be used to request other resources.
-class SSOAuthService extends AuthService {
+class SSOAuthService extends TeamsAuthService {
     private authToken: string | null;
-    private teamsAuthService: TeamsAuthService = new TeamsAuthService();
 
     constructor() {
         super();
-        // Initialize the Teams SDK
-        microsoftTeams.initialize();
 
         this.authToken = null;
-    }
-
-    public async handleRedirect(): Promise<AuthenticationResult | null> {
-        return null;
-    }
-
-    public isCallback(): boolean {
-        return this.teamsAuthService.isCallback();
-    }
-
-    public async login(): Promise<AccountInfo | null> {
-        return this.teamsAuthService.login();
-    }
-
-    public async logout(): Promise<void> {
-        this.teamsAuthService.logout();
     }
 
     private parseTokenToUser(token: string): AccountInfo {
