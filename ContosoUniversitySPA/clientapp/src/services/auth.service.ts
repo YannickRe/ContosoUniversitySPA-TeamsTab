@@ -12,7 +12,7 @@ abstract class AuthService {
 
   abstract getToken(): Promise<string | null>;
 
-  abstract getUser(): AccountInfo | null;
+  abstract getUser(): Promise<AccountInfo | null>;
 
   // Does an authenticated fetch by acquiring and appending the Bearer token for our backend
   public async fetch(url: RequestInfo, options?: RequestInit | undefined): Promise<Response> {

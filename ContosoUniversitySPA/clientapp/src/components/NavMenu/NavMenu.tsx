@@ -32,7 +32,7 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
 
             userControl = <React.Fragment>
                 <li className="nav-item" style={style}>
-                    <span className="navbar-text text-dark">Hello {this.context.user.displayableId || this.context.user.upn || this.context.user.userName || this.context.user.username}</span>
+                    <span className="navbar-text text-dark">Hello {this.context.user.username}</span>
                 </li>
             </React.Fragment>;
         }

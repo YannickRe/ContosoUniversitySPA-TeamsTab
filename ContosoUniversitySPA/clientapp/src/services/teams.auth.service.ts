@@ -60,7 +60,7 @@ class TeamsAuthService extends AuthService {
     await this.msal2AuthService.logout();
   }
 
-  public getUser(): AccountInfo | null {
+  public getUser(): Promise<AccountInfo | null> {
     return this.msal2AuthService.getUser();
   }
 

@@ -13,8 +13,8 @@ abstract class AuthServiceInstance {
   
       if (params.get("inTeams") || url.pathname === TeamsAuthService.authStartPath || url.pathname === TeamsAuthService.authEndPath) {
          AuthServiceInstance.instance = new TeamsAuthService();
-      // } else if (params.get("inTeamsSSO")) {
-      //   AuthServiceInstance.instance = new SSOAuthService();
+      } else if (params.get("inTeamsSSO")) {
+        AuthServiceInstance.instance = new SSOAuthService();
       } else {
         AuthServiceInstance.instance = new Msal2AuthService(SigninType.Popup);
       }

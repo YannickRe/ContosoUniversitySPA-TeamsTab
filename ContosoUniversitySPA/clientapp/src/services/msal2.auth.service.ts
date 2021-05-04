@@ -78,9 +78,9 @@ class Msal2AuthService extends AuthService {
         }
     }
 
-    public getUser(): AccountInfo | null {
+    public getUser(): Promise<AccountInfo | null> {
         let currentAccount: AccountInfo | null = this.app.getActiveAccount();
-        return currentAccount;
+        return Promise.resolve(currentAccount);
     }
 
     public async getToken(): Promise<string | null> {

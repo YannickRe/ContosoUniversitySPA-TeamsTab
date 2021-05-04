@@ -14,6 +14,7 @@ import { AppContext } from './components/AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { Barcode } from './components/Barcode/Barcode';
 import TeamsAuthService from './services/teams.auth.service';
+import { AccountInfo } from "@azure/msal-common";
 
 export interface IAppProps {
 
@@ -22,7 +23,7 @@ export interface IAppProps {
 export interface IAppState {
     loading: boolean;
     inTeams: boolean;
-    user: any;
+    user: AccountInfo | null;
     error: any;
     redirectPath?: string;
 }
