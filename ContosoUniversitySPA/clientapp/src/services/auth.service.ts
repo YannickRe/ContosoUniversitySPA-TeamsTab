@@ -4,7 +4,7 @@ import { AccountInfo, AuthenticationResult } from "@azure/msal-common";
 abstract class AuthService {
   abstract handleRedirect(): Promise<AuthenticationResult | null>;
 
-  abstract isCallback(): boolean;
+  abstract isSystemPath(): boolean;
 
   abstract login(): Promise<AccountInfo | null>;
 

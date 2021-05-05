@@ -13,7 +13,6 @@ import CourseDelete from './components/Courses/CourseDelete';
 import { AppContext } from './components/AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { Barcode } from './components/Barcode/Barcode';
-import TeamsAuthService from './services/teams.auth.service';
 import { AccountInfo } from "@azure/msal-common";
 
 export interface IAppProps {
@@ -56,10 +55,6 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
             await authService.getInstance().handleRedirect();
 
-            if (this.url.pathname === TeamsAuthService.authStartPath) {
-                authService.getInstance().login();
-            }
-
             await authService.getInstance().getToken();
             let user = await authService.getInstance().getUser();
             this.setState({
@@ -87,7 +82,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
       }
 
     private async login(): Promise<void> {
-        this.setState({ loading: true });
+        this.setState({ loading: true, user: null });
         try {
             let user = await authService.getInstance().login();
             if (user) {
@@ -103,51 +98,47 @@ export default class App extends React.Component<IAppProps, IAppState> {
     };
 
     public render() {
-        let content = null;
-
-        if (this.url.pathname !== TeamsAuthService.authStartPath) {
-            if (this.url.pathname === '/config') {
-                content = <Route path="/config" component={Config} />;
-            } else {
-                if (!authService.getInstance().isCallback()) {
-                    content = <Spinner label="Authenticating..." />
-                    
-                    if (!this.state.loading) {
-                        content =   <div className="App-login">
-                                        <div className="App-login-button-container">
-                                            <Button color="primary" onClick={async () => await this.login()}>
-                                                <span className="ms-Button-label label-46">Sign in</span>
-                                            </Button>
-                                        </div>
-                                    </div>;
-
-                        if (this.state.user) {
-                            content =   <Switch>
-                                            <Route exact path="/">
-                                                {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
-                                            </Route>
-                                            <Route exact path='/courses' component={Courses} />
-                                            <Route exact path='/barcode' component={Barcode} />
-                                            <Route path="/courses/details/:courseID" component={CourseDetail} />
-                                            <Route path="/courses/delete/:courseID" component={CourseDelete} />
-                                            <Route path="/courses/create/" component={CourseCreate} />
-                                        </Switch>;
-                        }
-                    }
-                }
-                else {
-                    content = <Spinner label="Signing in..." />;
-                    if(this.state.error) {
-                        content = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
-                    }
-                }
-            }
+        if (authService.getInstance().isSystemPath()) {
+            return null;
         }
+
+        let userContent =   <React.Fragment>
+                                <Route exact path="/">
+                                    {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
+                                </Route>
+                                <Route exact path='/courses' component={Courses} />
+                                <Route exact path='/barcode' component={Barcode} />
+                                <Route path="/courses/details/:courseID" component={CourseDetail} />
+                                <Route path="/courses/delete/:courseID" component={CourseDelete} />
+                                <Route path="/courses/create/" component={CourseCreate} />
+                            </React.Fragment>;
+        
+        if (!this.state.user) {
+            userContent =   <div className="App-login">
+                                <div className="App-login-button-container">
+                                    <Button color="primary" onClick={async () => await this.login()}>
+                                        <span className="ms-Button-label label-46">Sign in</span>
+                                    </Button>
+                                </div>
+                            </div>;
+        }
+
+        if (this.state.loading) {
+            userContent = <Spinner label="Busy" />;
+        }
+
+        if(this.state.error) {
+            userContent = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
+        }
+
         return (
             <AppContext.Provider value={this.state}>
-                <Layout>
-                    {content}
-                </Layout>
+                <Switch>
+                    <Route path="/config" component={Config} />
+                    <Layout>
+                        {userContent}
+                    </Layout>
+                </Switch>
             </AppContext.Provider>
         );
     }

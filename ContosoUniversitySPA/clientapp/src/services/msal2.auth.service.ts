@@ -49,7 +49,7 @@ class Msal2AuthService extends AuthService {
         return null;
     }
 
-    public isCallback(): boolean {
+    public isSystemPath(): boolean {
         return window.location.pathname === this.redirectPath;
     }
 
