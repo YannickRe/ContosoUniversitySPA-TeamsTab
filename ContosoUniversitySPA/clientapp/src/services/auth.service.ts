@@ -6,7 +6,7 @@ abstract class AuthService {
 
   abstract isSystemPath(): boolean;
 
-  abstract login(): Promise<AccountInfo | null>;
+  abstract login(loginhint?: string): Promise<AccountInfo | null>;
 
   abstract logout(): Promise<void>;
 

@@ -21,7 +21,13 @@ class TeamsAuthService extends Msal2AuthService {
   public async handleRedirect(): Promise<AuthenticationResult | null> {
     const url = new URL(window.location.toString());
     if (url.pathname === TeamsAuthService.authStartPath) {
-      super.login();
+      let upn = await new Promise<string | undefined>((resolve) => {
+        microsoftTeams.getContext(context => {
+          resolve(context.userPrincipalName);
+        });
+      });
+
+      super.login(upn);
     }
 
     var result = await super.handleRedirect();

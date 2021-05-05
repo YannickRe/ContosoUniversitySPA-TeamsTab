@@ -53,17 +53,19 @@ class Msal2AuthService extends AuthService {
         return window.location.pathname === this.redirectPath;
     }
 
-    public async login(): Promise<AccountInfo | null> {
+    public async login(loginhint?: string): Promise<AccountInfo | null> {
         if (this.signinType === SigninType.Popup) {
             let authResult: AuthenticationResult = await this.app.loginPopup({
-                ...this.tokenRequest
+                ...this.tokenRequest,
+                loginHint: loginhint
             });
             return this.handleAuthResult(authResult);
         }
         else {
             this.app.loginRedirect({
                 ...this.tokenRequest,
-                redirectStartPage: `${window.location.href}`
+                redirectStartPage: `${window.location.href}`,
+                loginHint: loginhint
             });
         }
         return null;
