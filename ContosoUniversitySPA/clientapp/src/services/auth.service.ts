@@ -26,6 +26,14 @@ abstract class AuthService {
       return fetch(url, options);
     });
   }
+
+  public async validateConsent(): Promise<void> {
+    let response = await this.fetch(`api/tokens/checkconsent`);
+    if (!response.ok) {
+      let responseBody = await response.text();
+      throw JSON.parse(responseBody);
+    }
+  }
 }
 
 export default AuthService;

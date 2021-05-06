@@ -36,15 +36,17 @@ class Msal2AuthService extends AuthService {
     }
 
     public async handleRedirect(): Promise<AuthenticationResult | null> {
-        try {
-            let authResult = await this.app.handleRedirectPromise();
-            if (authResult) {
-                this.handleAuthResult(authResult);
+        if (this.signinType === SigninType.Redirect) {
+            try {
+                let authResult = await this.app.handleRedirectPromise();
+                if (authResult) {
+                    this.handleAuthResult(authResult);
+                }
+                return authResult;
             }
-            return authResult;
-        }
-        catch (error) {
-            console.error(error);
+            catch (error) {
+                console.error(error);
+            }
         }
         return null;
     }

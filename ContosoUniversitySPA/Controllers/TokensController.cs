@@ -39,6 +39,7 @@ namespace ContosoUniversitySPA.Controllers
         }
 
         [HttpGet]
+        [Route("checkconsent")]
         public async Task<ActionResult> GetAsync()
         {
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
@@ -55,6 +56,14 @@ namespace ContosoUniversitySPA.Controllers
                 {
                     errorCode = ex.ErrorCode,
                     errorMessage = ex.Message
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    errorCode = e.HResult.ToString(),
+                    errorMessage = e.Message
                 });
             }
         }

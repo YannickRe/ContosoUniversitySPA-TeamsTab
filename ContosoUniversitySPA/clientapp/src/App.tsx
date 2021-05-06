@@ -54,8 +54,10 @@ export default class App extends React.Component<IAppProps, IAppState> {
             }
 
             await authService.getInstance().handleRedirect();
-
-            await authService.getInstance().getToken();
+            let token = await authService.getInstance().getToken();
+            if (token) {
+                await authService.getInstance().validateConsent();
+            }
             let user = await authService.getInstance().getUser();
             this.setState({
                 user: user,
