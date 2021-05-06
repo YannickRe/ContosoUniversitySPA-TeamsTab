@@ -9,7 +9,7 @@ export enum SigninType {
 
 class Msal2AuthService extends AuthService {
     private redirectPath: string = "/callback/standalone";
-    private app: PublicClientApplication;
+    private scopes: string[] = ["api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8/access_as_user"];
     private applicationConfig: Configuration = {
         auth: {
             clientId: 'ff33d24d-38dc-4114-b98c-71749d18efb8',
@@ -19,9 +19,9 @@ class Msal2AuthService extends AuthService {
             cacheLocation: "localStorage"
         }
     };
-    private tokenRequest: PopupRequest = {
-        scopes: ["api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8/access_as_user"]
-    };
+
+    private loginScopes = ["openid", "profile", "offline_access", "email", "User.Read", "TeamsActivity.Send", ...this.scopes];
+    private app: PublicClientApplication;
     private signinType: SigninType = SigninType.Popup;
 
     constructor(signinType: SigninType, redirectPath: string = "/callback/standalone") {
@@ -56,14 +56,14 @@ class Msal2AuthService extends AuthService {
     public async login(loginhint?: string): Promise<AccountInfo | null> {
         if (this.signinType === SigninType.Popup) {
             let authResult: AuthenticationResult = await this.app.loginPopup({
-                ...this.tokenRequest,
+                scopes: this.loginScopes,
                 loginHint: loginhint
             });
             return this.handleAuthResult(authResult);
         }
         else {
             this.app.loginRedirect({
-                ...this.tokenRequest,
+                scopes: this.loginScopes,
                 redirectStartPage: `${window.location.href}`,
                 loginHint: loginhint
             });
@@ -87,7 +87,9 @@ class Msal2AuthService extends AuthService {
 
     public async getToken(): Promise<string | null> {
         const activeAccount = this.app.getActiveAccount();
-        let silentTokenRequest: SilentRequest = this.tokenRequest;
+        let silentTokenRequest: SilentRequest = {
+            scopes: this.scopes
+        };
 
         if (!activeAccount)
         {
@@ -116,7 +118,9 @@ class Msal2AuthService extends AuthService {
             if (error instanceof InteractionRequiredAuthError) {
                 if (this.signinType === SigninType.Popup) {
                     try {
-                        let authResult: AuthenticationResult = await this.app.acquireTokenPopup(this.tokenRequest);
+                        let authResult: AuthenticationResult = await this.app.acquireTokenPopup({
+                            scopes: this.scopes
+                        });
                         this.app.setActiveAccount(authResult.account);
                         return authResult.accessToken;
                     }
@@ -127,7 +131,7 @@ class Msal2AuthService extends AuthService {
                 else {
                     try {
                         this.app.acquireTokenRedirect({
-                            ...this.tokenRequest,
+                            scopes: this.scopes,
                             redirectStartPage: `${window.location.href}`
                         });
                     }

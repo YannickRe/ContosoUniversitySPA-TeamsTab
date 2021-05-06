@@ -48,9 +48,13 @@ class SSOAuthService extends TeamsAuthService {
                 resolve(this.authToken);
             } else {
                 microsoftTeams.authentication.getAuthToken({
-                    successCallback: result => {
+                    successCallback: async result => {
                         this.authToken = result;
-                        resolve(result);
+                        let response = await this.fetch(`api/tokens`);
+                        if (response.ok) {
+                            resolve(result);
+                        }
+                        reject(JSON.parse(await response.text()) || response.statusText);
                     },
                     failureCallback: reason => {
                         reject(reason);

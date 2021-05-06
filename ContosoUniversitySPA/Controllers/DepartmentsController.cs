@@ -19,11 +19,11 @@ namespace ContosoUniversitySPA.Controllers
     public class DepartmentsController : ControllerBase
     {
         private readonly SchoolContext _context;
-        private readonly ILogger<CoursesController> _logger;
+        private readonly ILogger<DepartmentsController> _logger;
 
         static readonly string[] scopeRequiredByApi = new string[] { "access_as_user" };
 
-        public DepartmentsController(ILogger<CoursesController> logger, SchoolContext context)
+        public DepartmentsController(ILogger<DepartmentsController> logger, SchoolContext context)
         {
             _logger = logger;
             _context = context;
@@ -32,7 +32,7 @@ namespace ContosoUniversitySPA.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DepartmentData>>> GetAsync()
         {
-            //HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
             return await _context.Departments
                             .Select(x => ItemToDTO(x))

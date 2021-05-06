@@ -28,25 +28,13 @@ namespace ContosoUniversitySPA
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(options =>
-                {
-                    options.TokenValidationParameters.ValidAudiences = new List<string>() { Configuration.GetSection("AzureAd").GetValue<string>("Audience"), Configuration.GetSection("AzureAd").GetValue<string>("ClientId") };
-                },
-                options =>
-                {
-                    Configuration.Bind("AzureAd", options);
-                    options.AllowWebApiToBeAuthorizedByACL = true;
-                })
+                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"))
                 #region SendActivity
-                .EnableTokenAcquisitionToCallDownstreamApi(options => { })
+                .EnableTokenAcquisitionToCallDownstreamApi()
                 .AddMicrosoftGraph(Configuration.GetSection("Graph"))
                 .AddInMemoryTokenCaches();
                 #endregion
 
-            services.Configure<JwtBearerOptions>("AzureAd", options =>
-            {
-                options.TokenValidationParameters.ValidAudiences = new List<string>() { Configuration.GetSection("AzureAd").GetValue<string>("Audience"), Configuration.GetSection("AzureAd").GetValue<string>("ClientId") };
-            });
 
             services.AddControllersWithViews();
 

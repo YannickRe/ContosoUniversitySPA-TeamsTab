@@ -82,20 +82,23 @@ export default class App extends React.Component<IAppProps, IAppState> {
       }
 
     private async login(): Promise<void> {
-        this.setState({ loading: true, user: null });
+        this.setState({ loading: true, user: null, error: null });
         try {
             let user = await authService.getInstance().login();
             if (user) {
-              this.setState({ user: user, loading: false });
+              this.setState({ user: user, loading: false, error: null });
             } else {
-              this.setState({ loading: false });
+              this.setState({ loading: false, error: null });
             }
         }
         catch(error) {
-            console.error(error);
-            this.setState({ loading: false });
+            this.setState({ loading: false, error: error });
         }
     };
+
+    private isInvalidGrant(): boolean {
+        return this.state.error?.errorCode === 'invalid_grant' || false;
+    }
 
     public render() {
         if (authService.getInstance().isSystemPath()) {
@@ -113,7 +116,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                 <Route path="/courses/create/" component={CourseCreate} />
                             </React.Fragment>;
         
-        if (!this.state.user) {
+        if (!this.state.user || this.isInvalidGrant()) {
             userContent =   <div className="App-login">
                                 <div className="App-login-button-container">
                                     <Button color="primary" onClick={async () => await this.login()}>
@@ -127,8 +130,9 @@ export default class App extends React.Component<IAppProps, IAppState> {
             userContent = <Spinner label="Busy" />;
         }
 
-        if(this.state.error) {
-            userContent = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
+        let errorContent = null;
+        if(this.state.error && !this.isInvalidGrant()) {
+            errorContent = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
         }
 
         return (
@@ -136,6 +140,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <Switch>
                     <Route path="/config" component={Config} />
                     <Layout>
+                        {errorContent}
                         {userContent}
                     </Layout>
                 </Switch>
