@@ -1,9 +1,11 @@
 ﻿using ContosoUniversitySPA.Data;
+using ContosoUniversitySPA.Handlers;
 using ContosoUniversitySPA.Models;
 using ContosoUniversitySPA.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web.Resource;
@@ -19,16 +21,16 @@ namespace ContosoUniversitySPA.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly SchoolContext _context;
-        private readonly ILogger<CoursesController> _logger;
         private readonly GraphServiceClient _graphServiceClient;
+        private readonly IConfiguration _configuration;
 
         static readonly string[] scopeRequiredByApi = new string[] { "access_as_user" };
 
-        public CoursesController(ILogger<CoursesController> logger, SchoolContext context, GraphServiceClient graphServiceClient)
+        public CoursesController(SchoolContext context, GraphServiceClient graphServiceClient, IConfiguration configuration)
         {
-            _logger = logger;
             _context = context;
             _graphServiceClient = graphServiceClient;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -110,35 +112,7 @@ namespace ContosoUniversitySPA.Controllers
             courseData = (await this.GetAsync(course.CourseID)).Value;
 
             #region SendActivity
-            var directLink = $"https://teams.microsoft.com/l/entity/71b0a04a-36cc-479c-b82b-31e260e94a61/contosoUniversity?webUrl=https://4x10.azurewebsites.net/courses/details/{course.CourseID}&label=Course: {course.Title}&context={{\"subEntityId\": \"/courses/details/{course.CourseID}\",\"channelId\": \"19%3a6c2533a7b6254b6886a2e08d86eddc17%40thread.tacv2\"}}";
-
-            await _graphServiceClient.Teams["fe6ebd09-1908-4b5f-aaef-7c96e9ab7e9b"].SendActivityNotification(
-                new TeamworkActivityTopic()
-                {
-                    Source = TeamworkActivityTopicSource.Text,
-                    WebUrl = directLink,
-                    Value = "Contoso University > Courses"
-                },
-                "courseCreated",
-                null,
-                new ItemBody()
-                {
-                    Content = "A new Course has been added"
-                },
-                new List<Microsoft.Graph.KeyValuePair>()
-                {
-                    new Microsoft.Graph.KeyValuePair()
-                    {
-                        Name = "courseName",
-                        Value = courseData.Title
-                    }
-                },
-                new AadUserNotificationRecipient()
-                {
-                    ODataType = "microsoft.graph.aadUserNotificationRecipient",
-                    UserId = "258368cf-55aa-4958-a43b-3e4e5f823d60"
-                }
-            ).Request().PostAsync();
+            await NotificationHandler.SendCourseCreatedNotification(_graphServiceClient, courseData.CourseID, courseData.Title, $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}", _configuration);
             #endregion
 
             return CreatedAtAction(

@@ -1,4 +1,4 @@
-import { Configuration, InteractionRequiredAuthError, PopupRequest, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
+import { Configuration, InteractionRequiredAuthError, PublicClientApplication, SilentRequest } from "@azure/msal-browser";
 import { AuthenticationResult, AccountInfo } from "@azure/msal-common";
 import AuthService from "./auth.service";
 

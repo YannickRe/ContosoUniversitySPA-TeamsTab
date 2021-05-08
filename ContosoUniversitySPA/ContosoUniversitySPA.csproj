@@ -54,13 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="clientapp\src\components\NavMenu\NavMenuState.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="clientapp\src\components\NavMenu\NavMenuProps.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="clientapp\src\components\NavMenu\NavMenuProps - Copy.js">
       <DependentUpon>NavMenuProps.js</DependentUpon>
     </None>
