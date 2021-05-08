@@ -91,8 +91,7 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
                     </dl>
                 </div>
                 <div>
-                    {/* <Link to={`/courses/edit/${this.state.course?.courseID}`}>Edit</Link> | <Link to={`/courses/delete/${this.state.course?.courseID}`}>Delete</Link> | <Link to={`/courses`}>Back to List</Link> */}
-                    <Link to={`/courses/delete/${this.state.course?.courseID}`}>Delete</Link> | <Link to={`/courses`}>Back to List</Link>
+                    <Link to={`/courses/edit/${this.state.course?.courseID}`}>Edit</Link> | <Link to={`/courses/delete/${this.state.course?.courseID}`}>Delete</Link> | <Link to={`/courses`}>Back to List</Link>
                 </div>
 
                 {teamsContent}
@@ -110,7 +109,7 @@ class CourseDetail extends React.Component<ICourseDetailProps, ICourseDetailStat
 
     private copyLink(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void {
         event.preventDefault();
-        microsoftTeams.shareDeepLink({ subEntityId: `/courses/details/${this.state.course?.courseID}`, subEntityLabel: `Course: ${this.state.course?.title}`, subEntityWebUrl: `http://4x10.azurewebsites.net/courses/details/1050` });
+        microsoftTeams.shareDeepLink({ subEntityId: `/courses/details/${this.state.course?.courseID}`, subEntityLabel: `Course: ${this.state.course?.title}`, subEntityWebUrl: `${window.location.origin}/courses/details/${this.state.course?.courseID}` });
     }
 
     private scheduleMeeting(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void {

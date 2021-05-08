@@ -53,6 +53,9 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
                             <ul className="navbar-nav flex-grow-1">
                                 <NavItem>
+                                    <NavLink tag={Link} className="text-dark" to="/students">Students</NavLink>
+                                </NavItem>
+                                <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/courses">Courses</NavLink>
                                 </NavItem>
                                 {teamsOnlyLink}

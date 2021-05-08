@@ -15,6 +15,11 @@ import * as microsoftTeams from "@microsoft/teams-js";
 import { Barcode } from './components/Barcode/Barcode';
 import { AccountInfo } from "@azure/msal-common";
 import CourseEdit from './components/Courses/CourseEdit';
+import { Students } from './components/Students/Students';
+import StudentDetail from './components/Students/StudentDetail';
+import StudentDelete from './components/Students/StudentDelete';
+import StudentCreate from './components/Students/StudentCreate';
+import StudentEdit from './components/Students/StudentEdit';
 
 export interface IAppProps {
 
@@ -112,12 +117,17 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                 <Route exact path="/">
                                     {this.state.redirectPath ? <Redirect to={this.state.redirectPath} /> : <Courses />}
                                 </Route>
-                                <Route exact path='/courses' component={Courses} />
                                 <Route exact path='/barcode' component={Barcode} />
+                                <Route exact path='/courses' component={Courses} />
                                 <Route path="/courses/edit/:courseID" component={CourseEdit} />
                                 <Route path="/courses/details/:courseID" component={CourseDetail} />
                                 <Route path="/courses/delete/:courseID" component={CourseDelete} />
                                 <Route path="/courses/create/" component={CourseCreate} />
+                                <Route exact path='/students' component={Students} />
+                                <Route path="/students/edit/:studentID" component={StudentEdit} />
+                                <Route path="/students/details/:studentID" component={StudentDetail} />
+                                <Route path="/students/delete/:studentID" component={StudentDelete} />
+                                <Route path="/students/create/" component={StudentCreate} />
                             </React.Fragment>;
         
         if (!this.state.user || this.isInvalidGrant()) {
