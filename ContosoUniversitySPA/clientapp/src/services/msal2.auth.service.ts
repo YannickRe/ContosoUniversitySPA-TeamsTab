@@ -9,11 +9,11 @@ export enum SigninType {
 
 class Msal2AuthService extends AuthService {
     private redirectPath: string = "/callback/standalone";
-    private scopes: string[] = ["api://4x10.azurewebsites.net/ff33d24d-38dc-4114-b98c-71749d18efb8/access_as_user"];
+    private scopes: string[] = [process.env.REACT_APP_SCOPE as string];
     private applicationConfig: Configuration = {
         auth: {
-            clientId: 'ff33d24d-38dc-4114-b98c-71749d18efb8',
-            authority: 'https://login.microsoftonline.com/22e80a38-0d9e-4d45-a92c-356004a48f3f'
+            clientId: process.env.REACT_APP_CLIENT_ID as string,
+            authority: process.env.REACT_APP_AUTHORITY as string
         },
         cache: {
             cacheLocation: "localStorage"
