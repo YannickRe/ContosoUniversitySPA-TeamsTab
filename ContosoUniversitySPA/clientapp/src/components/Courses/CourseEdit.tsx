@@ -5,11 +5,11 @@ import { Spinner } from 'reactstrap';
 import authService from "../../services/auth.service.instance";
 import { Department } from '../../models/Department';
 
-export interface ICourseCreateProps extends RouteComponentProps<any> {
+export interface ICourseEditProps extends RouteComponentProps<any> {
 
 }
 
-export interface ICourseCreateState {
+export interface ICourseEditState {
     departments: Department[];
     courseId?: number;
     courseTitle?: string;
@@ -19,13 +19,14 @@ export interface ICourseCreateState {
     loading: boolean;
 }
 
-class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateState> {
-    static displayName = CourseCreate.name;
+class CourseEdit extends React.Component<ICourseEditProps, ICourseEditState> {
+    static displayName = CourseEdit.name;
 
-    constructor(props: ICourseCreateProps) {
+    constructor(props: ICourseEditProps) {
         super(props);
-
-        this.state = { 
+        
+        this.state = {
+            courseId: props.match.params.courseID,
             departments: [],
             success: false,
             loading: true,
@@ -34,7 +35,7 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
     }
     
     public componentDidMount(): void {
-        this.loadDepartment();
+        this.loadData();
     }
 
     public render(): React.ReactElement {
@@ -54,7 +55,7 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
                         <form onSubmit={async (event) => await this.handleSubmit(event)}>
                             <div className="form-group">
                                 <label htmlFor="courseID" className="control-label">Number</label>
-                                <input name="courseID" type="number" required className="form-control" value={this.state.courseId} onChange={(event) => { this.setState({ courseId: +event.target.value }) }} />
+                                <div>{this.state.courseId}</div>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="title" className="control-label">Title</label>
@@ -74,7 +75,7 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
                                 </select>
                             </div>
                             <div className="form-group">
-                                <input type="submit" value="Create" className="btn btn-primary" />
+                                <input type="submit" value="Save" className="btn btn-primary" />
                             </div>
                         </form>
                     </div>
@@ -87,7 +88,7 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
 
         return (
             <React.Fragment>
-                <h2>Create</h2>
+                <h2>Edit</h2>
                 {contents}
             </React.Fragment>
         );
@@ -96,15 +97,14 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
     private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
         
-        const rawResponse = await authService.getInstance().fetch(`api/courses`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Accept': 'application/json',
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({courseID: this.state.courseId, title: this.state.courseTitle, credits: this.state.courseCredits, departmentID: this.state.courseDepartmentId})
-                                    });
-        await rawResponse.json();
+        await authService.getInstance().fetch(`api/courses/${this.state.courseId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({courseID: this.state.courseId, title: this.state.courseTitle, credits: this.state.courseCredits, departmentID: this.state.courseDepartmentId})
+                    });
 
         this.setState({
             success: true,
@@ -115,14 +115,21 @@ class CourseCreate extends React.Component<ICourseCreateProps, ICourseCreateStat
         });
     }
 
-    private async loadDepartment(): Promise<void> {
+    private async loadData(): Promise<void> {
         const response = await authService.getInstance().fetch(`api/departments`);
         const data = await response.json();
-        this.setState({ 
+
+        const courseResponse = await authService.getInstance().fetch(`api/courses/${this.state.courseId}`);
+        const courseData = await courseResponse.json();
+
+        this.setState({
+            courseTitle: courseData.title,
+            courseCredits: courseData.credits,
+            courseDepartmentId: courseData.departmentID,
             departments: data, 
-            loading: false 
+            loading: false
         });
       }
 }
 
-export default withRouter(CourseCreate);
+export default withRouter(CourseEdit);
