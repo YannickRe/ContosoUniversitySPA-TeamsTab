@@ -14,6 +14,7 @@ import { AppContext } from './components/AppContext';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { Barcode } from './components/Barcode/Barcode';
 import { AccountInfo } from "@azure/msal-common";
+import CourseEdit from './components/Courses/CourseEdit';
 
 export interface IAppProps {
 
@@ -113,6 +114,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                 </Route>
                                 <Route exact path='/courses' component={Courses} />
                                 <Route exact path='/barcode' component={Barcode} />
+                                <Route path="/courses/edit/:courseID" component={CourseEdit} />
                                 <Route path="/courses/details/:courseID" component={CourseDetail} />
                                 <Route path="/courses/delete/:courseID" component={CourseDelete} />
                                 <Route path="/courses/create/" component={CourseCreate} />
