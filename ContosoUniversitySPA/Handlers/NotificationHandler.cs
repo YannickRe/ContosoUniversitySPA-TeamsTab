@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,12 +9,13 @@ namespace ContosoUniversitySPA.Handlers
     {
         public static async Task SendCourseCreatedNotification(GraphServiceClient graphServiceClient, int courseId, string courseTitle, string baseUrl, IConfiguration config)
         {
-            var appId = "71b0a04a-36cc-479c-b82b-31e260e94a61";
-            var tabName = "contosoUniversity";
+            var configSection = config.GetSection("ActivityNotification");
 
-            var teamId = config.GetSection("ActivityNotification").GetValue<string>("TeamId");
-            var channelId = config.GetSection("ActivityNotification").GetValue<string>("ChannelId");
-            var userId = config.GetSection("ActivityNotification").GetValue<string>("UserId");
+            var appId = configSection.GetValue<string>("AppId");
+            var tabName = configSection.GetValue<string>("TabName");
+            var teamId = configSection.GetValue<string>("TeamId");
+            var channelId = configSection.GetValue<string>("ChannelId");
+            var userId = configSection.GetValue<string>("UserId");
 
             if (!string.IsNullOrWhiteSpace(appId)
                 && !string.IsNullOrWhiteSpace(tabName)
