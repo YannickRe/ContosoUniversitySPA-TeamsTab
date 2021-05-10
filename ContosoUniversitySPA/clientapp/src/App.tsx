@@ -165,7 +165,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
         if(this.state.error && !this.isInvalidGrant()) {
             errorContent = <div className="alert alert-danger" role="alert">
                                 <h4 className="alert-heading">An error occurred</h4>
-                                <p>We regret to inform you that an error has occurred while working with the Contoso University applications, more details below.</p>
+                                <p>We regret to inform you that an error has occurred while working with the Contoso University application, more details below.</p>
                                 <hr />
                                 <p className="mb-0"><pre>{JSON.stringify(this.state.error, null, 2)}</pre></p>
                             </div>;

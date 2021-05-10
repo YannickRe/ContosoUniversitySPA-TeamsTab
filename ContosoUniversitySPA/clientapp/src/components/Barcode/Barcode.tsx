@@ -86,37 +86,36 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
     }
 
     public render(): React.ReactElement<IBarcodeProps> {
-        let contents = null;
-        let consent = null;
-
-        if (this.state.consent) {
-            consent = <p>{this.state.consent}</p>;
+        if (this.state.studentDetailUrl) {
+            return <React.Fragment>
+                        <Redirect to={this.state.studentDetailUrl} />
+                    </React.Fragment>;
         }
-
+        
+        let errorMessage = null;
         if (this.state.error) {
-            contents = <React.Fragment>
+            errorMessage = <React.Fragment>
                             <div className="alert alert-danger" role="alert">
                                 <h4 className="alert-heading">An error occurred</h4>
-                                <p>We regret to inform you that an error has occurred while working with the Contoso University applications, more details below.</p>
+                                <p>We regret to inform you that an error has occurred while scanning the QR code, more details below.</p>
                                 <hr />
                                 <p className="mb-0"><pre>{this.state.error}</pre></p>
                             </div>
                         </React.Fragment>;
+
         }
-        else if (this.state.studentDetailUrl) {
-            contents =  <React.Fragment>
-                            <Redirect to={this.state.studentDetailUrl} />
-                        </React.Fragment>;
-        }
-        return (
-            <React.Fragment>
-                <h1>Find Student by QR code</h1>
-                <Button color="primary" onClick={() => this.scanCode()}>Scan code</Button>
-                {consent}
-                <hr />
-                {contents}
-            </React.Fragment>
-        );
+        return  <React.Fragment>
+                    {errorMessage}
+                    <div className="jumbotron">
+                        <h1 className="display-4">Scan Student Card</h1>
+                        <p className="lead">Contoso University application can find a specific Student profile by scanning the Student Card.</p>
+                        <hr className="my-4" />
+                        <p>{this.state.consent}</p>
+                        <p className="lead">
+                            <Button color="primary" className="btn-lg" onClick={async () => await this.scanCode()}>Scan code</Button>
+                        </p>
+                    </div>
+                </React.Fragment>;
     }
 }
 
