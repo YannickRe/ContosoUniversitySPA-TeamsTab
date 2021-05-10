@@ -2,13 +2,15 @@ import React from 'react';
 import { Button } from 'reactstrap';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { AppContext } from '../AppContext';
+import { Redirect } from 'react-router-dom';
+import authService from "../../services/auth.service.instance";
 
 export interface IBarcodeProps {
 
 }
 
 export interface IBarcodeState {
-    decodedText?: string;
+    studentDetailUrl?: string;
     error?: any;
     consent?: string;
 }
@@ -63,14 +65,21 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
                 }, config);
             });
 
-            this.setState({
-                decodedText: text,
-                error: undefined
-            });
+            //check if exists
+            const response = await authService.getInstance().fetch(`api/students/${text}`);
+            if (response.ok) {
+                this.setState({
+                    studentDetailUrl: `/students/details/${text}`,
+                    error: undefined
+                });
+            }
+            else {
+                throw new Error(`The student with ID "${text}" could not be found.`)
+            }
         }
         catch (err) {
             this.setState({
-                decodedText: undefined,
+                studentDetailUrl: undefined,
                 error: err
             });
         }
@@ -86,19 +95,22 @@ export class Barcode extends React.Component<IBarcodeProps, IBarcodeState> {
 
         if (this.state.error) {
             contents = <React.Fragment>
-                            <h3>Error</h3>
-                            <p>{this.state.error}</p>
+                            <div className="alert alert-danger" role="alert">
+                                <h4 className="alert-heading">An error occurred</h4>
+                                <p>We regret to inform you that an error has occurred while working with the Contoso University applications, more details below.</p>
+                                <hr />
+                                <p className="mb-0"><pre>{this.state.error}</pre></p>
+                            </div>
                         </React.Fragment>;
         }
-        else if (this.state.decodedText) {
-            contents = <React.Fragment>
-                <h3>Barcode Text</h3>
-                <p>{this.state.decodedText}</p>
-            </React.Fragment>;
+        else if (this.state.studentDetailUrl) {
+            contents =  <React.Fragment>
+                            <Redirect to={this.state.studentDetailUrl} />
+                        </React.Fragment>;
         }
         return (
             <React.Fragment>
-                <h1>Barcode</h1>
+                <h1>Find Student by QR code</h1>
                 <Button color="primary" onClick={() => this.scanCode()}>Scan code</Button>
                 {consent}
                 <hr />

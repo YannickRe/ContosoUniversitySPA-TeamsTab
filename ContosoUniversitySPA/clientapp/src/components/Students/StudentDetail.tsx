@@ -116,7 +116,7 @@ class StudentDetail extends React.Component<IStudentDetailProps, IStudentDetailS
             student: data, 
             loading: false 
         });
-      }
+    }
 }
 
 StudentDetail.contextType = AppContext;

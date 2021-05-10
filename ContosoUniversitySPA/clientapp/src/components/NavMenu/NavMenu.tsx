@@ -37,13 +37,6 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
             </React.Fragment>;
         }
 
-        let teamsOnlyLink = null;
-        if (this.context.inTeams) {
-            teamsOnlyLink = <NavItem>
-                                <NavLink tag={Link} className="text-dark" to="/barcode">Barcode</NavLink>
-                            </NavItem>;
-        }
-
         return (
             <header>
                 <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
@@ -58,7 +51,6 @@ export class NavMenu extends React.Component<INavMenuProps, INavMenuState> {
                                 <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/courses">Courses</NavLink>
                                 </NavItem>
-                                {teamsOnlyLink}
                                 {userControl}
                             </ul>
                         </Collapse>

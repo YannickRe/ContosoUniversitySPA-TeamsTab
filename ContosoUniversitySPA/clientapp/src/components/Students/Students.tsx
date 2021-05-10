@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Spinner, Table } from 'reactstrap';
 import { Student } from '../../models/Student';
 import authService from "../../services/auth.service.instance";
+import { AppContext } from '../AppContext';
 
-export interface IStudentsProps {
+export interface IStudentsProps extends RouteComponentProps<any> {
 
 }
 
@@ -56,11 +57,16 @@ export class Students extends React.Component<IStudentsProps, IStudentsState> {
 
     public render(): React.ReactElement<IStudentsProps> {
         let contents = this.state.loading ? <Spinner type="grow" color="primary" /> : Students.renderTable(this.state.students);
+        let barcodeUrl = null;
+        if (this.context.inTeams) {
+           barcodeUrl = <React.Fragment>{' '}| <Link to={`/barcode`}>Find Student by QR code</Link></React.Fragment>
+        }
+
         return (
             <React.Fragment>
                 <h1>Students</h1>
                 <p>
-                    <Link to={`/students/create`}>Create New</Link>
+                    <Link to={`/students/create`}>Create New</Link>{barcodeUrl}
                 </p>
                 {contents}
             </React.Fragment>
@@ -76,3 +82,8 @@ export class Students extends React.Component<IStudentsProps, IStudentsState> {
         });
     }
 }
+
+
+Students.contextType = AppContext;
+
+export default withRouter(Students);
