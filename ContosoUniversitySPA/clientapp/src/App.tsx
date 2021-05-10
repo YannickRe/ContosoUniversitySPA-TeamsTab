@@ -132,12 +132,29 @@ export default class App extends React.Component<IAppProps, IAppState> {
         
         if (!this.state.user || this.isInvalidGrant()) {
             userContent =   <div className="App-login">
-                                <div className="App-login-button-container">
-                                    <Button color="primary" onClick={async () => await this.login()}>
-                                        <span className="ms-Button-label label-46">Sign in</span>
-                                    </Button>
+                                <div className="jumbotron">
+                                    <h1 className="display-4">Sign in required</h1>
+                                    <p className="lead">Contoso University application requires you to login with your work or school account.</p>
+                                    <hr className="my-4" />
+                                    <p>Please click the button to start the sign in process.</p>
+                                    <p className="lead">
+                                        <Button color="primary" className="btn-lg" onClick={async () => await this.login()}>Sign in</Button>
+                                    </p>
                                 </div>
                             </div>;
+            if (this.isInvalidGrant()) {
+                userContent =   <div className="App-login">
+                                    <div className="jumbotron">
+                                        <h1 className="display-4">Consent required</h1>
+                                        <p className="lead">Contoso University application requires you to login with your work or school account.</p>
+                                        <hr className="my-4" />
+                                        <p>Contoso University has undergone changes and requires some additional consent to work correctly. Please click the button to start the consent process.</p>
+                                        <p className="lead">
+                                            <Button color="primary" className="btn-lg" onClick={async () => await this.login()}>Give consent</Button>
+                                        </p>
+                                    </div>
+                                </div>;
+            }
         }
 
         if (this.state.loading) {
@@ -146,7 +163,12 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
         let errorContent = null;
         if(this.state.error && !this.isInvalidGrant()) {
-            errorContent = <div className="App-error">{JSON.stringify(this.state.error)}</div>;
+            errorContent = <div className="alert alert-danger" role="alert">
+                                <h4 className="alert-heading">An error occurred</h4>
+                                <p>We regret to inform you that an error has occurred while working with the Contoso University applications, more details below.</p>
+                                <hr />
+                                <p className="mb-0"><pre>{JSON.stringify(this.state.error, null, 2)}</pre></p>
+                            </div>;
         }
 
         return (
