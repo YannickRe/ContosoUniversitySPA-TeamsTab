@@ -1,4 +1,4 @@
-# Contoso University - Microsoft Teams Tab Implementation
+# Contoso University - Microsoft Teams Tab
 This repository serves as the base code for my session "[4x10 minutes: Advanced Techniques in Microsoft Teams Tab Development](https://sessionize.com/s/yannick-reekmans/4x10_minutes_advanced_techniques_in/39492)". I use it to demonstrate 4 techniques that can take your Teams tab to the next level.
 
 This code is provided without instructions and without any support, and is merely intended to be used for inspiration and show possible use cases for the lesser used techniques in Teams tab development.
