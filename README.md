@@ -30,3 +30,6 @@ Microsoft Graph gives the ability to send notifications to the native Activity F
 
 ## Technique 4: Device capabilities
 Lastly, the app shows off a use case for integrating with device capabilities. It uses the phone camera as a barcode scanner to scan "Student ID" and open up the student's profile page in the backend system.
+
+# Disclaimer
+THIS CODE IS PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
